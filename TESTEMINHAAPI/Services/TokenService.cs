@@ -21,7 +21,7 @@ namespace TESTEMINHAAPI.Services
                     new Claim("Id", user.Id.ToString()),
                     new Claim("Nome", user.Nome),
                     new Claim("Email", user.Email),
-                    new Claim("Tipo", user.Tipo.ToString())
+                    new Claim(ClaimTypes.Role, user.Tipo.ToString())
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(1),

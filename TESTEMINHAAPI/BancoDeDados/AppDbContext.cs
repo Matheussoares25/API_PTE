@@ -20,6 +20,7 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Noticia> Noticias { get; set; }
         public DbSet<Treinamentos> Treinamentos { get; set; }
+        public DbSet<Modulos> Modulos { get; set; }
 
         public DbSet<UsuarioTreinamento> UsuarioTreinamentos { get; set; }
     }
