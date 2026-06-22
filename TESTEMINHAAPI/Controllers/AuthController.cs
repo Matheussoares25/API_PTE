@@ -73,7 +73,7 @@ namespace TESTEMINHAAPI.Controllers
                     usuario.Email,
                     usuario.Acesso,
                 },
-                novoToken
+                Token = novoToken
             });
 
 
