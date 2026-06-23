@@ -4,10 +4,10 @@ namespace TESTEMINHAAPI.Models
 {
     public class Treinamentos
     {
-        public int Id { get; set; }
+        public int id { get; set; }
         [MaxLength(125)]
-        public string Nome { get; set; }
+        public string nome { get; set; }
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

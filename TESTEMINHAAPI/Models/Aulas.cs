@@ -5,17 +5,17 @@ namespace TESTEMINHAAPI.Models
 {
     public class Aulas
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(125)]
-        public string Nome { get; set; }
+        public string nome { get; set; }
 
-        public string Conteudo { get; set; }
+        public string conteudo { get; set; }
 
         // Relacionamento com Modulos
-        public int ModuloId { get; set; }
-        public Modulos Modulo { get; set; }
+        public int modulo_id { get; set; }
+        public Modulos modulo { get; set; }
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

@@ -5,17 +5,17 @@ namespace TESTEMINHAAPI.Models
 {
     public class UseTreinamentos
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        public int UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public int usuario_id { get; set; }
+        public Usuario usuario { get; set; }
 
-        public int TreinamentoId { get; set; }
-        public Treinamentos Treinamento { get; set; }
+        public int treinamento_id { get; set; }
+        public Treinamentos treinamento { get; set; }
 
-        public DateTime MatriculadoEm { get; set; }
+        public DateTime matriculado_em { get; set; }
 
         [MaxLength(50)]
-        public string Status { get; set; } = "matriculado";
+        public string status { get; set; } = "matriculado";
     }
 }

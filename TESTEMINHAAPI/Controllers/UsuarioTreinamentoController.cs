@@ -9,6 +9,9 @@ namespace TESTEMINHAAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    // Controller para gerenciar associação simples usuário-treinamento.
+    // UsuarioTreinamento representa apenas o relacionamento (sem data/status).
+    // Use este controller quando precisar apenas ligar usuários a treinamentos sem metadados.
     public class UsuarioTreinamentoController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -24,9 +27,9 @@ namespace TESTEMINHAAPI.Controllers
         {
             // Busca todos os registros do usuário pelo UsuarioId
             var usuarioTreinos = _context.UsuarioTreinamentos
-                .Include(ut => ut.Usuario)
-                .Include(ut => ut.Treinamento)
-                .Where(ut => ut.UsuarioId == id)
+                .Include(ut => ut.usuario)
+                .Include(ut => ut.treinamento)
+                .Where(ut => ut.usuario_id == id)
                 .ToList();
             // Retorna lista (pode ser vazia) em vez de 404, para facilitar o consumo pelo cliente
             return Ok(usuarioTreinos);
@@ -45,9 +48,9 @@ namespace TESTEMINHAAPI.Controllers
         {
             // Busca todos os relacionamentos pelo TreinamentoId e projeta apenas os usuários
             var usuarios = _context.UsuarioTreinamentos
-                .Include(ut => ut.Usuario)
-                .Where(ut => ut.TreinamentoId == treinamentoId)
-                .Select(ut => ut.Usuario)
+                .Include(ut => ut.usuario)
+                .Where(ut => ut.treinamento_id == treinamentoId)
+                .Select(ut => ut.usuario)
                 .ToList();
 
             // Retorna lista (pode ser vazia) em vez de 404
@@ -68,8 +71,8 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var usuarioExiste = _context.Usuarios.Any(u => u.Id == dto.UsuarioId);
-            var treinamentoExiste = _context.Treinamentos.Any(t => t.Id == dto.TreinamentoId);
+            var usuarioExiste = _context.Usuarios.Any(u => u.id == dto.usuario_id);
+            var treinamentoExiste = _context.Treinamentos.Any(t => t.id == dto.treinamento_id);
 
             if (!usuarioExiste || !treinamentoExiste)
             {
@@ -77,7 +80,7 @@ namespace TESTEMINHAAPI.Controllers
             }
 
             // Evita duplicatas (mesmo UsuarioId e TreinamentoId)
-            var jaExiste = _context.UsuarioTreinamentos.Any(ut => ut.UsuarioId == dto.UsuarioId && ut.TreinamentoId == dto.TreinamentoId);
+            var jaExiste = _context.UsuarioTreinamentos.Any(ut => ut.usuario_id == dto.usuario_id && ut.treinamento_id == dto.treinamento_id);
             if (jaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Relacionamento já existe" });
@@ -85,14 +88,14 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new UsuarioTreinamento
             {
-                UsuarioId = dto.UsuarioId,
-                TreinamentoId = dto.TreinamentoId
+                usuario_id = dto.usuario_id,
+                treinamento_id = dto.treinamento_id
             };
 
             _context.UsuarioTreinamentos.Add(novo);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Usuário-Treinamento criado com sucesso", data = novo });
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         /// <summary>
@@ -105,11 +108,11 @@ namespace TESTEMINHAAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Editar(int id, UsuarioTreinamento dto)
         {
-            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.Id == id);
+            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.id == id);
             if (item == null) return NotFound();
 
-            item.UsuarioId = dto.UsuarioId;
-            item.TreinamentoId = dto.TreinamentoId;
+            item.usuario_id = dto.usuario_id;
+            item.treinamento_id = dto.treinamento_id;
 
             _context.SaveChanges();
 
@@ -122,17 +125,17 @@ namespace TESTEMINHAAPI.Controllers
         /// <remarks>
         /// Requer autorização. Retorna 404 se não encontrado e 200 em caso de sucesso.
         /// </remarks>
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.Id == id);
+            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.id == id);
             if (item == null) return NotFound();
 
             _context.UsuarioTreinamentos.Remove(item);
             _context.SaveChanges();
 
-            return Ok(new { successo = true, message = "Usuário-Treinamento apagado" });
+            return NoContent();
         }
     }
 }

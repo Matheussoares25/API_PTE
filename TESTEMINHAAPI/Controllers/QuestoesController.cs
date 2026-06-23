@@ -24,9 +24,9 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var questoes = _context.Questoes
-                .Include(q => q.Aula)
-                .ThenInclude(a => a.Modulo)
-                .ThenInclude(m => m.Treinamento)
+                .Include(q => q.aula)
+                .ThenInclude(a => a.modulo)
+                .ThenInclude(m => m.treinamento)
                 .ToList();
 
             return Ok(questoes);
@@ -37,10 +37,10 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var questao = _context.Questoes
-                .Include(q => q.Aula)
-                .ThenInclude(a => a.Modulo)
-                .ThenInclude(m => m.Treinamento)
-                .FirstOrDefault(q => q.Id == id);
+                .Include(q => q.aula)
+                .ThenInclude(a => a.modulo)
+                .ThenInclude(m => m.treinamento)
+                .FirstOrDefault(q => q.id == id);
 
             if (questao == null) return NotFound();
 
@@ -53,7 +53,7 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var aulaExiste = _context.Aulas.Any(a => a.Id == dto.AulaId);
+            var aulaExiste = _context.Aulas.Any(a => a.id == dto.aula_id);
             if (!aulaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Aula inexistente" });
@@ -61,51 +61,49 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Questoes
             {
-                Texto = dto.Texto,
-                AulaId = dto.AulaId,
-                Criado = DateTime.UtcNow
+                texto = dto.texto,
+                aula_id = dto.aula_id,
+                criado = DateTime.UtcNow
             };
 
             _context.Questoes.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Questoes dto)
         {
-            var questao = _context.Questoes.FirstOrDefault(q => q.Id == id);
+            var questao = _context.Questoes.FirstOrDefault(q => q.id == id);
             if (questao == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            var aulaExiste = _context.Aulas.Any(a => a.Id == dto.AulaId);
+            var aulaExiste = _context.Aulas.Any(a => a.id == dto.aula_id);
             if (!aulaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Aula inexistente" });
             }
 
-            questao.Texto = dto.Texto;
-            questao.AulaId = dto.AulaId;
+            questao.texto = dto.texto;
+            questao.aula_id = dto.aula_id;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Questão atualizada com sucesso", data = questao });
         }
-
-        [Authorize]
+        [Authorize(Roles = "3")]     
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var questao = _context.Questoes.FirstOrDefault(q => q.Id == id);
+            var questao = _context.Questoes.FirstOrDefault(q => q.id == id);
             if (questao == null) return NotFound();
 
             _context.Questoes.Remove(questao);
             _context.SaveChanges();
-
-            return Ok(new { sucesso = true, message = "Questão apagada" });
+            return NoContent();
         }
     }
 }

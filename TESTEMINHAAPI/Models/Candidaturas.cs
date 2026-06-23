@@ -5,33 +5,33 @@ namespace TESTEMINHAAPI.Models
 {
     public class Candidaturas
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         // Relacionamento com Vagas
-        public int VagaId { get; set; }
-        public Vagas Vaga { get; set; }
+        public int vaga_id { get; set; }
+        public Vagas vaga { get; set; }
 
         // Opcional: relacionamento com Usuario (se candidato for um usuário do sistema)
-        public int? UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public int? usuario_id { get; set; }
+        public Usuario usuario { get; set; }
 
         [MaxLength(150)]
-        public string Nome { get; set; }
+        public string nome { get; set; }
 
         [MaxLength(150)]
-        public string Email { get; set; }
+        public string email { get; set; }
 
         [MaxLength(50)]
-        public string Telefone { get; set; }
+        public string telefone { get; set; }
 
         // URL do currículo ou anexo
         [MaxLength(500)]
-        public string CurriculoUrl { get; set; }
+        public string curriculo_url { get; set; }
 
         // Status da candidatura: "pendente", "aprovado", "rejeitado" etc.
         [MaxLength(50)]
-        public string Status { get; set; } = "pendente";
+        public string status { get; set; } = "pendente";
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

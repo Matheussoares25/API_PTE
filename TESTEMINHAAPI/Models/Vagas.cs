@@ -5,22 +5,22 @@ namespace TESTEMINHAAPI.Models
 {
     public class Vagas
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(200)]
-        public string Titulo { get; set; }
+        public string titulo { get; set; }
 
-        public string Descricao { get; set; }
+        public string descricao { get; set; }
 
         [MaxLength(150)]
-        public string Localizacao { get; set; }
+        public string localizacao { get; set; }
 
         // Quantidade de vagas disponíveis
-        public int Quantidade { get; set; }
+        public int quantidade { get; set; }
 
         // Indica se a vaga está ativa
-        public bool Ativa { get; set; } = true;
+        public bool ativa { get; set; } = true;
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

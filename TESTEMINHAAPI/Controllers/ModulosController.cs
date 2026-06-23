@@ -30,7 +30,7 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var modulos = _context.Modulos
-                .Include(m => m.Treinamento)
+                .Include(m => m.treinamento)
                 .ToList();
 
             return Ok(modulos);
@@ -47,8 +47,8 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var modulo = _context.Modulos
-                .Include(m => m.Treinamento)
-                .FirstOrDefault(m => m.Id == id);
+                .Include(m => m.treinamento)
+                .FirstOrDefault(m => m.id == id);
 
             if (modulo == null) return NotFound();
 
@@ -66,8 +66,8 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult ObterPorTreinamento(int treinamentoId)
         {
             var modulos = _context.Modulos
-                .Include(m => m.Treinamento)
-                .Where(m => m.TreinamentoId == treinamentoId)
+                .Include(m => m.treinamento)
+                .Where(m => m.treinamento_id == treinamentoId)
                 .ToList();
 
             return Ok(modulos);
@@ -85,7 +85,7 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var treinoExiste = _context.Treinamentos.Any(t => t.Id == dto.TreinamentoId);
+            var treinoExiste = _context.Treinamentos.Any(t => t.id == dto.treinamento_id);
             if (!treinoExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Treinamento inexistente" });
@@ -93,14 +93,14 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Modulos
             {
-                Nome = dto.Nome,
-                TreinamentoId = dto.TreinamentoId
+                nome = dto.nome,
+                treinamento_id = dto.treinamento_id
             };
 
             _context.Modulos.Add(novo);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Módulo criado com sucesso", data = novo });
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         /// <summary>
@@ -113,19 +113,19 @@ namespace TESTEMINHAAPI.Controllers
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Modulos dto)
         {
-            var modulo = _context.Modulos.FirstOrDefault(m => m.Id == id);
+            var modulo = _context.Modulos.FirstOrDefault(m => m.id == id);
             if (modulo == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            var treinoExiste = _context.Treinamentos.Any(t => t.Id == dto.TreinamentoId);
+            var treinoExiste = _context.Treinamentos.Any(t => t.id == dto.treinamento_id);
             if (!treinoExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Treinamento inexistente" });
             }
 
-            modulo.Nome = dto.Nome;
-            modulo.TreinamentoId = dto.TreinamentoId;
+            modulo.nome = dto.nome;
+            modulo.treinamento_id = dto.treinamento_id;
 
             _context.SaveChanges();
 
@@ -138,17 +138,17 @@ namespace TESTEMINHAAPI.Controllers
         /// <remarks>
         /// Requer autorização. Retorna 404 se o módulo não existir e 200 em caso de sucesso.
         /// </remarks>
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var modulo = _context.Modulos.FirstOrDefault(m => m.Id == id);
+            var modulo = _context.Modulos.FirstOrDefault(m => m.id == id);
             if (modulo == null) return NotFound();
 
             _context.Modulos.Remove(modulo);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Módulo apagado" });
+            return NoContent();
         }
     }
 }

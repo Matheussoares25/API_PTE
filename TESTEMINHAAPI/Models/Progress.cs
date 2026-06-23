@@ -5,21 +5,21 @@ namespace TESTEMINHAAPI.Models
 {
     public class Progress
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        public int UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public int usuario_id { get; set; }
+        public Usuario usuario { get; set; }
 
         // Relacionamento com Aula
-        public int AulaId { get; set; }
-        public Aulas Aula { get; set; }
+        public int aula_id { get; set; }
+        public Aulas aula { get; set; }
 
         // Progresso em percentual (0-100)
-        public decimal Percentual { get; set; }
+        public decimal percentual { get; set; }
 
         // Tempo assistido em segundos
-        public int TempoSegundos { get; set; }
+        public int tempo_segundos { get; set; }
 
-        public DateTime AtualizadoEm { get; set; }
+        public DateTime atualizado_em { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace TESTEMINHAAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
-            var vaga = _context.Vagas.FirstOrDefault(v => v.Id == id);
+            var vaga = _context.Vagas.FirstOrDefault(v => v.id == id);
             if (vaga == null) return NotFound();
             return Ok(vaga);
         }
@@ -44,51 +44,50 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Vagas
             {
-                Titulo = dto.Titulo,
-                Descricao = dto.Descricao,
-                Localizacao = dto.Localizacao,
-                Quantidade = dto.Quantidade,
-                Ativa = dto.Ativa,
-                Criado = DateTime.UtcNow
+                titulo = dto.titulo,
+                descricao = dto.descricao,
+                localizacao = dto.localizacao,
+                quantidade = dto.quantidade,
+                ativa = dto.ativa,
+                criado = DateTime.UtcNow
             };
 
             _context.Vagas.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Vagas dto)
         {
-            var vaga = _context.Vagas.FirstOrDefault(v => v.Id == id);
+            var vaga = _context.Vagas.FirstOrDefault(v => v.id == id);
             if (vaga == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            vaga.Titulo = dto.Titulo;
-            vaga.Descricao = dto.Descricao;
-            vaga.Localizacao = dto.Localizacao;
-            vaga.Quantidade = dto.Quantidade;
-            vaga.Ativa = dto.Ativa;
+            vaga.titulo = dto.titulo;
+            vaga.descricao = dto.descricao;
+            vaga.localizacao = dto.localizacao;
+            vaga.quantidade = dto.quantidade;
+            vaga.ativa = dto.ativa;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Vaga atualizada com sucesso", data = vaga });
         }
-
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var vaga = _context.Vagas.FirstOrDefault(v => v.Id == id);
+            var vaga = _context.Vagas.FirstOrDefault(v => v.id == id);
             if (vaga == null) return NotFound();
 
             _context.Vagas.Remove(vaga);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Vaga apagada" });
+            return NoContent();
         }
     }
 }

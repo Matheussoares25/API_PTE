@@ -24,8 +24,8 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var candidaturas = _context.Candidaturas
-                .Include(c => c.Vaga)
-                .Include(c => c.Usuario)
+                .Include(c => c.vaga)
+                .Include(c => c.usuario)
                 .ToList();
 
             return Ok(candidaturas);
@@ -36,30 +36,33 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var cand = _context.Candidaturas
-                .Include(c => c.Vaga)
-                .Include(c => c.Usuario)
-                .FirstOrDefault(c => c.Id == id);
+                .Include(c => c.vaga)
+                .Include(c => c.usuario)
+                .FirstOrDefault(c => c.id == id);
 
             if (cand == null) return NotFound();
 
             return Ok(cand);
         }
 
+        /// <summary>
+        /// Cria uma nova candidatura.
+        /// </summary>
         [Authorize]
         [HttpPost]
         public IActionResult Criar(Candidaturas dto)
         {
             if (dto == null) return BadRequest();
 
-            var vagaExiste = _context.Vagas.Any(v => v.Id == dto.VagaId);
+            var vagaExiste = _context.Vagas.Any(v => v.id == dto.vaga_id);
             if (!vagaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Vaga inexistente" });
             }
 
-            if (dto.UsuarioId.HasValue)
+            if (dto.usuario_id.HasValue)
             {
-                var userExiste = _context.Usuarios.Any(u => u.Id == dto.UsuarioId.Value);
+                var userExiste = _context.Usuarios.Any(u => u.id == dto.usuario_id.Value);
                 if (!userExiste)
                 {
                     return BadRequest(new { sucesso = false, message = "Usuário informado não existe" });
@@ -68,70 +71,70 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Candidaturas
             {
-                VagaId = dto.VagaId,
-                UsuarioId = dto.UsuarioId,
-                Nome = dto.Nome,
-                Email = dto.Email,
-                Telefone = dto.Telefone,
-                CurriculoUrl = dto.CurriculoUrl,
-                Status = string.IsNullOrWhiteSpace(dto.Status) ? "pendente" : dto.Status,
-                Criado = DateTime.UtcNow
+                vaga_id = dto.vaga_id,
+                usuario_id = dto.usuario_id,
+                nome = dto.nome,
+                email = dto.email,
+                telefone = dto.telefone,
+                curriculo_url = dto.curriculo_url,
+                status = string.IsNullOrWhiteSpace(dto.status) ? "pendente" : dto.status,
+                criado = DateTime.UtcNow
             };
 
             _context.Candidaturas.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Candidaturas dto)
         {
-            var cand = _context.Candidaturas.FirstOrDefault(c => c.Id == id);
+            var cand = _context.Candidaturas.FirstOrDefault(c => c.id == id);
             if (cand == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            var vagaExiste = _context.Vagas.Any(v => v.Id == dto.VagaId);
+            var vagaExiste = _context.Vagas.Any(v => v.id == dto.vaga_id);
             if (!vagaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Vaga inexistente" });
             }
 
-            if (dto.UsuarioId.HasValue)
+            if (dto.usuario_id.HasValue)
             {
-                var userExiste = _context.Usuarios.Any(u => u.Id == dto.UsuarioId.Value);
+                var userExiste = _context.Usuarios.Any(u => u.id == dto.usuario_id.Value);
                 if (!userExiste)
                 {
                     return BadRequest(new { sucesso = false, message = "Usuário informado não existe" });
                 }
             }
 
-            cand.VagaId = dto.VagaId;
-            cand.UsuarioId = dto.UsuarioId;
-            cand.Nome = dto.Nome;
-            cand.Email = dto.Email;
-            cand.Telefone = dto.Telefone;
-            cand.CurriculoUrl = dto.CurriculoUrl;
-            cand.Status = dto.Status;
+            cand.vaga_id = dto.vaga_id;
+            cand.usuario_id = dto.usuario_id;
+            cand.nome = dto.nome;
+            cand.email = dto.email;
+            cand.telefone = dto.telefone;
+            cand.curriculo_url = dto.curriculo_url;
+            cand.status = dto.status;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Candidatura atualizada com sucesso", data = cand });
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var cand = _context.Candidaturas.FirstOrDefault(c => c.Id == id);
+            var cand = _context.Candidaturas.FirstOrDefault(c => c.id == id);
             if (cand == null) return NotFound();
 
             _context.Candidaturas.Remove(cand);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Candidatura apagada" });
+            return NoContent();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
 using TESTEMINHAAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using TESTEMINHAAPI.BancoDeDados;
+using Microsoft.AspNetCore.Authorization;
 
 
 namespace MinhaApi.Controllers
@@ -27,18 +29,28 @@ namespace MinhaApi.Controllers
         [HttpGet("{id}")]
         public IActionResult BuscarPorId(int id)
         {
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == id);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.id == id);
+
             if (usuario == null)
             {
                 return NotFound(new { Message = "Usuário não encontrado." });
             }
-            return Ok(usuario);
+
+            return Ok(new
+            {
+                usuario.id,
+                usuario.email,
+                usuario.tipo,
+               
+            });
         }
-        
+
+        [Authorize(Roles = "3")]
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Deletar(int id)
         {
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.Id == id);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.id == id);
             if (usuario == null)
             {
                 return NotFound(new { Message = "Usuário não encontrado." });
@@ -51,24 +63,28 @@ namespace MinhaApi.Controllers
         [HttpPut("{id}")]
         public IActionResult Atualizar(int id, [FromBody] Usuario usuarioAtualizado)
         {
-            var UsuarioExistente = _context.Usuarios.FirstOrDefault(u => u.Id == id);
+            var UsuarioExistente = _context.Usuarios.FirstOrDefault(u => u.id == id);
             if (UsuarioExistente == null)
             {
                 return NotFound(new { Message = "Usuário não encontrado." });
             }
-            UsuarioExistente.Nome = usuarioAtualizado.Nome;
-            UsuarioExistente.Email = usuarioAtualizado.Email;
+            UsuarioExistente.nome = usuarioAtualizado.nome;
+            UsuarioExistente.email = usuarioAtualizado.email;
             _context.SaveChanges();
             return Ok(UsuarioExistente);
         }
 
+        [EndpointDescription("Não requer token JWT. Retorna um JWT válido após autenticação.")]
         [HttpPost]
         public IActionResult Criar([FromBody] Usuario dto)
         {
             if (dto == null) return BadRequest(new { Message = "Dados do usuário inválidos." });
 
+            if (string.IsNullOrWhiteSpace(dto.senha))
+                return BadRequest(new { Message = "Senha é obrigatória." });
+
             // Valida e evita duplicação de email
-            var existe = _context.Usuarios.Any(u => u.Email == dto.Email);
+            var existe = _context.Usuarios.Any(u => u.email == dto.email);
             if (existe)
             {
                 return BadRequest(new { Message = "Email já cadastrado." });
@@ -76,19 +92,22 @@ namespace MinhaApi.Controllers
 
             var novo = new Usuario
             {
-                Nome = dto.Nome,
-                Email = dto.Email,
-                Senha = dto.Senha,
-                Ativo = dto.Ativo != 0 ? dto.Ativo : 1,
-                Token = dto.Token,
-                Tipo = dto.Tipo,
-                Acesso = dto.Acesso
+                nome = dto.nome,
+                email = dto.email,
+                ativo = dto.ativo != 0 ? dto.ativo : 1,
+                token = dto.token,
+                tipo = dto.tipo,
+                acesso = dto.acesso
             };
+
+            // Hash da senha antes de persistir - evita FormatException ao verificar posteriormente
+            var hasher = new PasswordHasher<Usuario>();
+            novo.senha = hasher.HashPassword(novo, dto.senha);
 
             _context.Usuarios.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(BuscarPorId), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(BuscarPorId), new { id = novo.id }, novo);
         }
     }
 }

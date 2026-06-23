@@ -24,8 +24,8 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var list = _context.Progress
-                .Include(p => p.Usuario)
-                .Include(p => p.Aula)
+                .Include(p => p.usuario)
+                .Include(p => p.aula)
                 .ToList();
             return Ok(list);
         }
@@ -35,9 +35,9 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var item = _context.Progress
-                .Include(p => p.Usuario)
-                .Include(p => p.Aula)
-                .FirstOrDefault(p => p.Id == id);
+                .Include(p => p.usuario)
+                .Include(p => p.aula)
+                .FirstOrDefault(p => p.id == id);
             if (item == null) return NotFound();
             return Ok(item);
         }
@@ -49,52 +49,52 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var userExists = _context.Usuarios.Any(u => u.Id == dto.UsuarioId);
-            var aulaExists = _context.Aulas.Any(a => a.Id == dto.AulaId);
+            var userExists = _context.Usuarios.Any(u => u.id == dto.usuario_id);
+            var aulaExists = _context.Aulas.Any(a => a.id == dto.aula_id);
             if (!userExists || !aulaExists) return BadRequest(new { sucesso = false, message = "Usuário ou Aula inexistente" });
 
             var novo = new Progress
             {
-                UsuarioId = dto.UsuarioId,
-                AulaId = dto.AulaId,
-                Percentual = dto.Percentual,
-                TempoSegundos = dto.TempoSegundos,
-                AtualizadoEm = DateTime.UtcNow
+                usuario_id = dto.usuario_id,
+                aula_id = dto.aula_id,
+                percentual = dto.percentual,
+                tempo_segundos = dto.tempo_segundos,
+                atualizado_em = DateTime.UtcNow
             };
 
             _context.Progress.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Progress dto)
         {
-            var item = _context.Progress.FirstOrDefault(p => p.Id == id);
+            var item = _context.Progress.FirstOrDefault(p => p.id == id);
             if (item == null) return NotFound();
             if (dto == null) return BadRequest();
 
-            item.Percentual = dto.Percentual;
-            item.TempoSegundos = dto.TempoSegundos;
-            item.AtualizadoEm = DateTime.UtcNow;
+            item.percentual = dto.percentual;
+            item.tempo_segundos = dto.tempo_segundos;
+            item.atualizado_em = DateTime.UtcNow;
 
             _context.SaveChanges();
             return Ok(new { sucesso = true, message = "Progresso atualizado", data = item });
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var item = _context.Progress.FirstOrDefault(p => p.Id == id);
+            var item = _context.Progress.FirstOrDefault(p => p.id == id);
             if (item == null) return NotFound();
 
             _context.Progress.Remove(item);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Progresso apagado" });
+            return NoContent();
         }
     }
 }

@@ -24,8 +24,8 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var alternativas = _context.Alternativas
-                .Include(a => a.Questao)
-                .ThenInclude(q => q.Aula)
+                .Include(a => a.questao)
+                .ThenInclude(q => q.aula)
                 .ToList();
 
             return Ok(alternativas);
@@ -36,9 +36,9 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var alternativa = _context.Alternativas
-                .Include(a => a.Questao)
-                .ThenInclude(q => q.Aula)
-                .FirstOrDefault(a => a.Id == id);
+                .Include(a => a.questao)
+                .ThenInclude(q => q.aula)
+                .FirstOrDefault(a => a.id == id);
 
             if (alternativa == null) return NotFound();
 
@@ -51,7 +51,7 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var questaoExiste = _context.Questoes.Any(q => q.Id == dto.QuestaoId);
+            var questaoExiste = _context.Questoes.Any(q => q.id == dto.questao_id);
             if (!questaoExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Questão inexistente" });
@@ -59,57 +59,56 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Alternativas
             {
-                Texto = dto.Texto,
-                Url = dto.Url,
-                Correta = dto.Correta,
-                Ordem = dto.Ordem,
-                QuestaoId = dto.QuestaoId,
-                Criado = DateTime.UtcNow
+                texto = dto.texto,
+                url = dto.url,
+                correta = dto.correta,
+                ordem = dto.ordem,
+                questao_id = dto.questao_id,
+                criado = DateTime.UtcNow
             };
 
             _context.Alternativas.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Alternativas dto)
         {
-            var alt = _context.Alternativas.FirstOrDefault(a => a.Id == id);
+            var alt = _context.Alternativas.FirstOrDefault(a => a.id == id);
             if (alt == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            var questaoExiste = _context.Questoes.Any(q => q.Id == dto.QuestaoId);
+            var questaoExiste = _context.Questoes.Any(q => q.id == dto.questao_id);
             if (!questaoExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Questão inexistente" });
             }
 
-            alt.Texto = dto.Texto;
-            alt.Url = dto.Url;
-            alt.Correta = dto.Correta;
-            alt.Ordem = dto.Ordem;
-            alt.QuestaoId = dto.QuestaoId;
+            alt.texto = dto.texto;
+            alt.url = dto.url;
+            alt.correta = dto.correta;
+            alt.ordem = dto.ordem;
+            alt.questao_id = dto.questao_id;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Alternativa atualizada com sucesso", data = alt });
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var alt = _context.Alternativas.FirstOrDefault(a => a.Id == id);
+            var alt = _context.Alternativas.FirstOrDefault(a => a.id == id);
             if (alt == null) return NotFound();
 
             _context.Alternativas.Remove(alt);
             _context.SaveChanges();
-
-            return Ok(new { sucesso = true, message = "Alternativa apagada" });
+            return NoContent();
         }
     }
 }

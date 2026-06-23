@@ -5,17 +5,17 @@ namespace TESTEMINHAAPI.Models
 {
     public class Certificados
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        public int UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public int usuario_id { get; set; }
+        public Usuario usuario { get; set; }
 
-        public int TreinamentoId { get; set; }
-        public Treinamentos Treinamento { get; set; }
+        public int treinamento_id { get; set; }
+        public Treinamentos treinamento { get; set; }
 
         [MaxLength(200)]
-        public string Codigo { get; set; }
+        public string codigo { get; set; }
 
-        public DateTime EmitidoEm { get; set; }
+        public DateTime emitido_em { get; set; }
     }
 }

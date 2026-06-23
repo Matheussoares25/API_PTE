@@ -24,9 +24,9 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var midias = _context.Midias
-                .Include(m => m.Aula)
-                .ThenInclude(a => a.Modulo)
-                .ThenInclude(mod => mod.Treinamento)
+                .Include(m => m.aula)
+                .ThenInclude(a => a.modulo)
+                .ThenInclude(mod => mod.treinamento)
                 .ToList();
 
             return Ok(midias);
@@ -37,10 +37,10 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Obter(int id)
         {
             var midia = _context.Midias
-                .Include(m => m.Aula)
-                .ThenInclude(a => a.Modulo)
-                .ThenInclude(mod => mod.Treinamento)
-                .FirstOrDefault(m => m.Id == id);
+                .Include(m => m.aula)
+                .ThenInclude(a => a.modulo)
+                .ThenInclude(mod => mod.treinamento)
+                .FirstOrDefault(m => m.id == id);
 
             if (midia == null) return NotFound();
 
@@ -53,7 +53,7 @@ namespace TESTEMINHAAPI.Controllers
         {
             if (dto == null) return BadRequest();
 
-            var aulaExiste = _context.Aulas.Any(a => a.Id == dto.AulaId);
+            var aulaExiste = _context.Aulas.Any(a => a.id == dto.aula_id);
             if (!aulaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Aula inexistente" });
@@ -61,55 +61,55 @@ namespace TESTEMINHAAPI.Controllers
 
             var novo = new Midias
             {
-                Nome = dto.Nome,
-                Url = dto.Url,
-                Tipo = dto.Tipo,
-                AulaId = dto.AulaId,
-                Criado = DateTime.UtcNow
+                nome = dto.nome,
+                url = dto.url,
+                tipo = dto.tipo,
+                aula_id = dto.aula_id,
+                criado = DateTime.UtcNow
             };
 
             _context.Midias.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.Id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Midias dto)
         {
-            var midia = _context.Midias.FirstOrDefault(m => m.Id == id);
+            var midia = _context.Midias.FirstOrDefault(m => m.id == id);
             if (midia == null) return NotFound();
 
             if (dto == null) return BadRequest();
 
-            var aulaExiste = _context.Aulas.Any(a => a.Id == dto.AulaId);
+            var aulaExiste = _context.Aulas.Any(a => a.id == dto.aula_id);
             if (!aulaExiste)
             {
                 return BadRequest(new { sucesso = false, message = "Aula inexistente" });
             }
 
-            midia.Nome = dto.Nome;
-            midia.Url = dto.Url;
-            midia.Tipo = dto.Tipo;
-            midia.AulaId = dto.AulaId;
+            midia.nome = dto.nome;
+            midia.url = dto.url;
+            midia.tipo = dto.tipo;
+            midia.aula_id = dto.aula_id;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Mídia atualizada com sucesso", data = midia });
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var midia = _context.Midias.FirstOrDefault(m => m.Id == id);
+            var midia = _context.Midias.FirstOrDefault(m => m.id == id);
             if (midia == null) return NotFound();
 
             _context.Midias.Remove(midia);
             _context.SaveChanges();
 
-            return Ok(new { sucesso = true, message = "Mídia apagada" });
+            return NoContent();
         }
     }
 }

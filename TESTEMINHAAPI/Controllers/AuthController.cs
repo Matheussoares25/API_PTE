@@ -37,8 +37,7 @@ namespace TESTEMINHAAPI.Controllers
 
         public IActionResult Login(LoginDto loginDto)
         {
-
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == loginDto.Email);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.email == loginDto.email);
 
             if (usuario == null)
             {
@@ -47,20 +46,20 @@ namespace TESTEMINHAAPI.Controllers
 
             var hash = new PasswordHasher<Usuario>();
 
-            var result = hash.VerifyHashedPassword(usuario, usuario.Senha, loginDto.Senha);
+            var result = hash.VerifyHashedPassword(usuario, usuario.senha, loginDto.senha);
 
             if (result == PasswordVerificationResult.Failed)
             {
                 return Unauthorized(new { successo = false , Message = "senha Invalida." });
             }
 
-            if(usuario.Acesso == 0)
+            if(usuario.acesso == 0)
             {
                 return Unauthorized(new { PrimeiroAcesso = true, Message = "aceite os Termos para prosseguir" });
             }
 
             var novoToken = _tokenService.GerarToken(usuario);
-           
+
 
             return Ok(new
             {
@@ -68,10 +67,10 @@ namespace TESTEMINHAAPI.Controllers
                 mensagem = "Login realizado com sucesso",
                 usuario = new
                 {
-                    usuario.Id,
-                    usuario.Nome,
-                    usuario.Email,
-                    usuario.Acesso,
+                    usuario.id,
+                    usuario.nome,
+                    usuario.email,
+                    usuario.acesso,
                 },
                 Token = novoToken
             });
@@ -84,34 +83,19 @@ namespace TESTEMINHAAPI.Controllers
         [HttpPut("AtualizarAcesso")]
         public IActionResult AtualizarAcesso(Usuario user)
         {
-            var usuario = _context.Usuarios.FirstOrDefault(u => u.Email == user.Email);
+            var usuario = _context.Usuarios.FirstOrDefault(u => u.email == user.email);
 
             if(usuario == null)
             {
                 return Unauthorized(new { successo = false, Message = "Email não encontrado." });
             }
 
-            usuario.Acesso = 1;
+            usuario.acesso = 1;
 
             _context.SaveChanges();
 
             return Ok(new { successo = true, Message = "Acesso Liberado" });
         }
-
-
-
-        [EndpointDescription("Não requer token JWT. Retorna um JWT válido após autenticação.")]
-        [HttpPost("Cadastrar")]
-        public IActionResult Cadastar(Usuario user)
-        {
-            var senhaHash = new PasswordHasher<Usuario>();
-
-            user.Senha = senhaHash.HashPassword(user, user.Senha);
-
-            _context.Usuarios.Add(user);
-            _context.SaveChanges();
-            return NoContent();
-        }
-
+      
     }
 }

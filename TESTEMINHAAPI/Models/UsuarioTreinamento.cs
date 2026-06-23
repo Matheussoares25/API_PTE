@@ -1,12 +1,12 @@
 ﻿using TESTEMINHAAPI.Models;
 
-public class UsuarioTreinamento
+    public class UsuarioTreinamento
 {
-    public int Id { get; set; }
+    public int id { get; set; }
 
-    public int UsuarioId { get; set; }
-    public Usuario Usuario { get; set; }
+    public int usuario_id { get; set; }
+    public Usuario usuario { get; set; }
 
-    public int TreinamentoId { get; set; }
-    public Treinamentos Treinamento { get; set; }
+    public int treinamento_id { get; set; }
+    public Treinamentos treinamento { get; set; }
 }

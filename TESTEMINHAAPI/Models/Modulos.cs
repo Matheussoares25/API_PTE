@@ -4,13 +4,13 @@ namespace TESTEMINHAAPI.Models
 {
     public class Modulos
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(125)]
-        public string Nome { get; set; }
+        public string nome { get; set; }
 
         // Relacionamento com Treinamentos (curso)
-        public int TreinamentoId { get; set; }
-        public Treinamentos Treinamento { get; set; }
+        public int treinamento_id { get; set; }
+        public Treinamentos treinamento { get; set; }
     }
 }

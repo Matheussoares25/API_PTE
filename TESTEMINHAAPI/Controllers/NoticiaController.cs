@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TESTEMINHAAPI.Models;
 using TESTEMINHAAPI.BancoDeDados;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TESTEMINHAAPI.Controllers
 {
@@ -14,58 +15,65 @@ namespace TESTEMINHAAPI.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
-            var Treinamentos = _context.Noticias.ToList();
-            return Ok(Treinamentos);
+            var noticias = _context.Noticias.ToList();
+            return Ok(noticias);
         }
+
+
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
-            var Treinamento = _context.Noticias.FirstOrDefault(t => t.Id == id);
-            if (Treinamento == null)
+            var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
+            // No-op null handling: preserve 404 response for missing noticia
+            if (noticia == null)
             {
                 return NotFound();
             }
-            return Ok(Treinamento);
+            return Ok(noticia);
         }
+
+
 
         [HttpPost]
         public IActionResult Criar(Noticia noticia)
         {
             _context.Noticias.Add(noticia);
             _context.SaveChanges();
-            return Ok(new { successo = true, message = "Noticia Criada com Sucesso" });
+            return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
 
         }
 
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var noticia = _context.Noticias.FirstOrDefault(t => t.Id == id);
+            var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
             if (noticia == null)
             {
                 return NotFound();
             }
             _context.Noticias.Remove(noticia);
             _context.SaveChanges();
-            return Ok(new {successo = true, message = "Noticia Apagada"});
+            return NoContent();
         }
 
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Noticia dto)
         {
-            var noticia = _context.Noticias.FirstOrDefault(t => t.Id == id);
+            var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
 
             if (noticia == null)
             {
                 return NotFound();
             }
 
-            noticia.Titulo = dto.Titulo;
-            noticia.Conteudo = dto.Conteudo;
-            noticia.Vaga = dto.Vaga;
+            noticia.titulo = dto.titulo;
+            noticia.conteudo = dto.conteudo;
+            noticia.vaga = dto.vaga;
 
             _context.SaveChanges();
 

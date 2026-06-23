@@ -5,25 +5,25 @@ namespace TESTEMINHAAPI.Models
 {
     public class Alternativas
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         // Relacionamento com Questoes
-        public int QuestaoId { get; set; }
-        public Questoes Questao { get; set; }
+        public int questao_id { get; set; }
+        public Questoes questao { get; set; }
 
         [MaxLength(500)]
-        public string Texto { get; set; }
+        public string texto { get; set; }
 
         // opcional: mídia ou URL para a alternativa
         [MaxLength(500)]
-        public string Url { get; set; }
+        public string url { get; set; }
 
         // indica se esta alternativa é a correta
-        public bool Correta { get; set; }
+        public bool correta { get; set; }
 
         // ordem de exibição
-        public int Ordem { get; set; }
+        public int ordem { get; set; }
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

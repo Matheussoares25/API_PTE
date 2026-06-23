@@ -5,18 +5,18 @@ namespace TESTEMINHAAPI.Models
 {
     public class Questoes
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
         [MaxLength(500)]
-        public string Texto { get; set; }
+        public string texto { get; set; }
 
         // Relacionamento com Aulas
-        public int AulaId { get; set; }
-        public Aulas Aula { get; set; }
+        public int aula_id { get; set; }
+        public Aulas aula { get; set; }
 
         // Alternativas relacionadas a esta questão
-        public ICollection<Alternativas> Alternativas { get; set; }
+        public ICollection<Alternativas> alternativas { get; set; }
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

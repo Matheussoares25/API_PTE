@@ -5,17 +5,17 @@ namespace TESTEMINHAAPI.Models
 {
     public class Notas
     {
-        public int Id { get; set; }
+        public int id { get; set; }
 
-        public int UsuarioId { get; set; }
-        public Usuario Usuario { get; set; }
+        public int usuario_id { get; set; }
+        public Usuario usuario { get; set; }
 
         // opcional: relacionar a prova, aula ou treinamento
-        public int? ProvaId { get; set; }
-        public int? TreinamentoId { get; set; }
+        public int? prova_id { get; set; }
+        public int? treinamento_id { get; set; }
 
-        public decimal Valor { get; set; }
+        public decimal valor { get; set; }
 
-        public DateTime Criado { get; set; }
+        public DateTime criado { get; set; }
     }
 }

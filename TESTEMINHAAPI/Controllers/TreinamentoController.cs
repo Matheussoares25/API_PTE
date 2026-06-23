@@ -27,8 +27,8 @@ namespace TESTEMINHAAPI.Controllers
 
             if (tipouser == "2")
             {
-                var Treinamentos = _context.Treinamentos.ToList();
-                return Ok(Treinamentos);
+                var treinamentos = _context.Treinamentos.ToList();
+                return Ok(treinamentos);
             }
 
             return BadRequest();
@@ -41,10 +41,10 @@ namespace TESTEMINHAAPI.Controllers
             var tipouser = User.FindFirst("Tipo")?.Value;
             if (tipouser != "2") return BadRequest();
 
-            treinamento.Criado = DateTime.Now;
+            treinamento.criado = DateTime.Now;
             _context.Treinamentos.Add(treinamento);
             _context.SaveChanges();
-            return Ok(new { sucesso = true, message = "Treinamento criado com sucesso", data = treinamento });
+            return CreatedAtAction(nameof(BuscaTreinamentos), new { id = treinamento.id }, treinamento);
         }
 
         [Authorize]
@@ -54,29 +54,29 @@ namespace TESTEMINHAAPI.Controllers
             var tipouser = User.FindFirst("Tipo")?.Value;
             if (tipouser != "2") return BadRequest();
 
-            var treino = _context.Treinamentos.FirstOrDefault(t => t.Id == id);
+            var treino = _context.Treinamentos.FirstOrDefault(t => t.id == id);
             if (treino == null) return NotFound();
 
-            treino.Nome = dto.Nome;
+            treino.nome = dto.nome;
 
             _context.SaveChanges();
 
             return Ok(new { sucesso = true, message = "Treinamento atualizado com sucesso", data = treino });
         }
 
-        [Authorize]
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             var tipouser = User.FindFirst("Tipo")?.Value;
             if (tipouser != "2") return BadRequest();
 
-            var treino = _context.Treinamentos.FirstOrDefault(t => t.Id == id);
+            var treino = _context.Treinamentos.FirstOrDefault(t => t.id == id);
             if (treino == null) return NotFound();
 
             _context.Treinamentos.Remove(treino);
             _context.SaveChanges();
-            return Ok(new { sucesso = true, message = "Treinamento apagado" });
+            return NoContent();
         }
 }
 }
