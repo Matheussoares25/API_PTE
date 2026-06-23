@@ -22,6 +22,19 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<Treinamentos> Treinamentos { get; set; }
         public DbSet<Modulos> Modulos { get; set; }
 
+        public DbSet<Aulas> Aulas { get; set; }
+        public DbSet<Questoes> Questoes { get; set; }
+        public DbSet<Midias> Midias { get; set; }
+        public DbSet<Alternativas> Alternativas { get; set; }
+        public DbSet<Vagas> Vagas { get; set; }
+        public DbSet<Candidaturas> Candidaturas { get; set; }
+        public DbSet<Certificados> Certificados { get; set; }
+        public DbSet<Notas> Notas { get; set; }
+        public DbSet<Progress> Progress { get; set; }
+        public DbSet<Reports> Reports { get; set; }
+        public DbSet<UseProva> UseProva { get; set; }
+        public DbSet<UseTreinamentos> UseTreinamentos { get; set; }
+
         public DbSet<UsuarioTreinamento> UsuarioTreinamentos { get; set; }
     }
 }

@@ -61,5 +61,34 @@ namespace MinhaApi.Controllers
             _context.SaveChanges();
             return Ok(UsuarioExistente);
         }
+
+        [HttpPost]
+        public IActionResult Criar([FromBody] Usuario dto)
+        {
+            if (dto == null) return BadRequest(new { Message = "Dados do usuário inválidos." });
+
+            // Valida e evita duplicação de email
+            var existe = _context.Usuarios.Any(u => u.Email == dto.Email);
+            if (existe)
+            {
+                return BadRequest(new { Message = "Email já cadastrado." });
+            }
+
+            var novo = new Usuario
+            {
+                Nome = dto.Nome,
+                Email = dto.Email,
+                Senha = dto.Senha,
+                Ativo = dto.Ativo != 0 ? dto.Ativo : 1,
+                Token = dto.Token,
+                Tipo = dto.Tipo,
+                Acesso = dto.Acesso
+            };
+
+            _context.Usuarios.Add(novo);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(BuscarPorId), new { id = novo.Id }, novo);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace TESTEMINHAAPI.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("usuario/{id}")]
         public IActionResult Obter(int id)
         {
             // Busca todos os registros do usuário pelo UsuarioId
@@ -32,8 +32,37 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(usuarioTreinos);
         }
 
+
+        /// <summary>
+        /// Retorna os usuários associados a um Treinamento específico.
+        /// </summary>
+        /// <remarks>
+        /// Busca relacionamentos por TreinamentoId e projeta apenas os objetos Usuario.
+        /// Retorna 200 com uma lista de usuários (pode ser vazia).
+        /// </remarks>
+        [HttpGet("treinamento/{treinamentoId}")]
+        public IActionResult ObterUsuariosPorTreinamento(int treinamentoId)
+        {
+            // Busca todos os relacionamentos pelo TreinamentoId e projeta apenas os usuários
+            var usuarios = _context.UsuarioTreinamentos
+                .Include(ut => ut.Usuario)
+                .Where(ut => ut.TreinamentoId == treinamentoId)
+                .Select(ut => ut.Usuario)
+                .ToList();
+
+            // Retorna lista (pode ser vazia) em vez de 404
+            return Ok(usuarios);
+        }
+
        
 
+        /// <summary>
+        /// Cria um novo relacionamento entre um Usuário e um Treinamento.
+        /// </summary>
+        /// <remarks>
+        /// Valida existência do Usuário e do Treinamento e evita duplicatas.
+        /// Retorna 200 com o registro criado ou 400 em caso de erro de validação.
+        /// </remarks>
         [HttpPost]
         public IActionResult Criar(UsuarioTreinamento dto)
         {
@@ -66,6 +95,12 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(new { sucesso = true, message = "Usuário-Treinamento criado com sucesso", data = novo });
         }
 
+        /// <summary>
+        /// Atualiza um relacionamento UsuarioTreinamento existente pelo Id.
+        /// </summary>
+        /// <remarks>
+        /// Requer autorização. Se o registro não existir retorna 404.
+        /// </remarks>
         [Authorize]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, UsuarioTreinamento dto)
@@ -81,6 +116,12 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(new { successo = true, message = "Usuário-Treinamento atualizado com sucesso", data = item });
         }
 
+        /// <summary>
+        /// Remove um relacionamento UsuarioTreinamento pelo Id.
+        /// </summary>
+        /// <remarks>
+        /// Requer autorização. Retorna 404 se não encontrado e 200 em caso de sucesso.
+        /// </remarks>
         [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
