@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TESTEMINHAAPI.BancoDeDados;
 
@@ -11,9 +12,11 @@ using TESTEMINHAAPI.BancoDeDados;
 namespace TESTEMINHAAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260623173913_licecesToken")]
+    partial class licecesToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,35 +201,33 @@ namespace TESTEMINHAAPI.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
                     b.Property<bool>("ativo")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("ativo");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("criado_em")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("criado_em");
+                        .HasColumnType("datetime(6)");
 
                     b.Property<decimal>("preco")
-                        .HasColumnType("decimal(65,30)")
-                        .HasColumnName("preco");
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("token")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)")
-                        .HasColumnName("token");
+                        .HasColumnType("varchar(200)");
 
                     b.Property<int?>("usuario_id")
                         .HasColumnType("int");
 
+                    b.Property<int>("usuarioid")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("validade_em")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("validade_em");
+                        .HasColumnType("datetime(6)");
 
                     b.HasKey("id");
 
-                    b.HasIndex("usuario_id");
+                    b.HasIndex("usuarioid");
 
-                    b.ToTable("Licencas", (string)null);
+                    b.ToTable("Licencas");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Midias", b =>
@@ -712,9 +713,9 @@ namespace TESTEMINHAAPI.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany("licencas")
-                        .HasForeignKey("usuario_id")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("FK_Licencas_Usuarios_usuario_id");
+                        .HasForeignKey("usuarioid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("usuario");
                 });

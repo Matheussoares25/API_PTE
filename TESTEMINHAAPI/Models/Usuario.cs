@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TESTEMINHAAPI.Models
 {
     public class Usuario
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
 
         [MaxLength(120)]
@@ -15,6 +18,10 @@ namespace TESTEMINHAAPI.Models
 
         [MaxLength(255)]
         public string token { get; set; }
+
+        // Relação: usuário pode possuir licenças (tokens) adquiridas
+        [System.Text.Json.Serialization.JsonIgnore]
+        public ICollection<Licencas> licencas { get; set; } = new List<Licencas>();
 
         public int tipo { get; set; }
 

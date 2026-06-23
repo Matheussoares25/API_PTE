@@ -41,7 +41,7 @@ namespace TESTEMINHAAPI.Controllers
 
             if (usuario == null)
             {
-                return Unauthorized(new { successo = false, Message = "Email não encontrado." });
+                return Unauthorized(new { successo = false, message = "Email não encontrado." });
             }
 
             var hash = new PasswordHasher<Usuario>();
@@ -50,12 +50,31 @@ namespace TESTEMINHAAPI.Controllers
 
             if (result == PasswordVerificationResult.Failed)
             {
-                return Unauthorized(new { successo = false , Message = "senha Invalida." });
+                return Unauthorized(new { successo = false , message = "senha Invalida." });
             }
 
             if(usuario.acesso == 0)
             {
-                return Unauthorized(new { PrimeiroAcesso = true, Message = "aceite os Termos para prosseguir" });
+                return Unauthorized(new { PrimeiroAcesso = true, message = "aceite os Termos para prosseguir" });
+            }
+
+            // Mantém validação: verifica se o token/licença associado ao usuário está ativo, válido e pertence ao usuário
+            if (string.IsNullOrWhiteSpace(usuario.token))
+            {
+                return StatusCode(403, new { successo = false, message = "Nenhuma licença atribuída ao usuário." });
+            }
+
+            var licencaValida = _context.Licencas.Any(l =>
+                l.token == usuario.token &&
+                l.ativo &&
+                l.validade_em > DateTime.UtcNow &&
+                l.usuario_id == usuario.id
+            );
+
+            if (!licencaValida)
+            {
+                // Usuário autenticado, mas sem licença válida pertencente a ele -> 403 Forbidden
+                return StatusCode(403, new { successo = false, message = "Licença inválida, expirada ou não pertence ao usuário." });
             }
 
             var novoToken = _tokenService.GerarToken(usuario);
@@ -87,14 +106,14 @@ namespace TESTEMINHAAPI.Controllers
 
             if(usuario == null)
             {
-                return Unauthorized(new { successo = false, Message = "Email não encontrado." });
+                return Unauthorized(new { successo = false, message = "Email não encontrado." });
             }
 
             usuario.acesso = 1;
 
             _context.SaveChanges();
 
-            return Ok(new { successo = true, Message = "Acesso Liberado" });
+            return Ok(new { successo = true, message = "Acesso Liberado" });
         }
       
     }

@@ -1,8 +1,13 @@
-﻿using TESTEMINHAAPI.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using TESTEMINHAAPI.Models;
 
     public class UsuarioTreinamento
-{
-    public int id { get; set; }
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
 
     public int usuario_id { get; set; }
     public Usuario usuario { get; set; }

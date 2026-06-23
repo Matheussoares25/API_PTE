@@ -95,7 +95,7 @@ namespace TESTEMINHAAPI.Controllers
             _context.UsuarioTreinamentos.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, new { sucesso = true, message = "Usuário-Treinamento criado com sucesso", data = novo });
         }
 
         /// <summary>

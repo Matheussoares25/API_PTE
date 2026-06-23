@@ -36,5 +36,31 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<UseTreinamentos> UseTreinamentos { get; set; }
 
         public DbSet<UsuarioTreinamento> UsuarioTreinamentos { get; set; }
+        public DbSet<Licencas> Licencas { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configura explicitamente a relação entre Licencas e Usuario usando a FK usuario_id
+            modelBuilder.Entity<Licencas>(entity =>
+            {
+                entity.ToTable("Licencas");
+
+                entity.HasKey(e => e.id);
+
+                entity.Property(e => e.token).HasColumnName("token").HasMaxLength(200).IsRequired();
+                entity.Property(e => e.criado_em).HasColumnName("criado_em");
+                entity.Property(e => e.validade_em).HasColumnName("validade_em");
+                entity.Property(e => e.ativo).HasColumnName("ativo");
+                entity.Property(e => e.preco).HasColumnName("preco");
+
+                entity.HasOne(e => e.usuario)
+                      .WithMany(u => u.licencas)
+                      .HasForeignKey(e => e.usuario_id)
+                      .HasConstraintName("FK_Licencas_Usuarios_usuario_id")
+                      .OnDelete(DeleteBehavior.SetNull);
+            });
+        }
     }
 }

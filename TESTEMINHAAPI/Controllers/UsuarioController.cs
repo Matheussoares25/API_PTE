@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-
 using TESTEMINHAAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using TESTEMINHAAPI.BancoDeDados;
@@ -8,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MinhaApi.Controllers
 {
-  [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class UsuariosController : ControllerBase
     {
@@ -33,7 +32,7 @@ namespace MinhaApi.Controllers
 
             if (usuario == null)
             {
-                return NotFound(new { Message = "Usuário não encontrado." });
+                return NotFound(new { message = "Usuário não encontrado." });
             }
 
             return Ok(new
@@ -41,7 +40,7 @@ namespace MinhaApi.Controllers
                 usuario.id,
                 usuario.email,
                 usuario.tipo,
-               
+
             });
         }
 
@@ -53,7 +52,7 @@ namespace MinhaApi.Controllers
             var usuario = _context.Usuarios.FirstOrDefault(u => u.id == id);
             if (usuario == null)
             {
-                return NotFound(new { Message = "Usuário não encontrado." });
+                return NotFound(new { message = "Usuário não encontrado." });
             }
             _context.Usuarios.Remove(usuario);
             _context.SaveChanges();
@@ -66,10 +65,12 @@ namespace MinhaApi.Controllers
             var UsuarioExistente = _context.Usuarios.FirstOrDefault(u => u.id == id);
             if (UsuarioExistente == null)
             {
-                return NotFound(new { Message = "Usuário não encontrado." });
+                return NotFound(new { message = "Usuário não encontrado." });
             }
+            // atualiza apenas campos permitidos; evita alteração do token manualmente
             UsuarioExistente.nome = usuarioAtualizado.nome;
             UsuarioExistente.email = usuarioAtualizado.email;
+
             _context.SaveChanges();
             return Ok(UsuarioExistente);
         }
@@ -78,16 +79,16 @@ namespace MinhaApi.Controllers
         [HttpPost]
         public IActionResult Criar([FromBody] Usuario dto)
         {
-            if (dto == null) return BadRequest(new { Message = "Dados do usuário inválidos." });
+            if (dto == null) return BadRequest(new { message = "Dados do usuário inválidos." });
 
             if (string.IsNullOrWhiteSpace(dto.senha))
-                return BadRequest(new { Message = "Senha é obrigatória." });
+                return BadRequest(new { message = "Senha é obrigatória." });
 
             // Valida e evita duplicação de email
             var existe = _context.Usuarios.Any(u => u.email == dto.email);
             if (existe)
             {
-                return BadRequest(new { Message = "Email já cadastrado." });
+                return BadRequest(new { message = "Email já cadastrado." });
             }
 
             var novo = new Usuario
@@ -95,7 +96,6 @@ namespace MinhaApi.Controllers
                 nome = dto.nome,
                 email = dto.email,
                 ativo = dto.ativo != 0 ? dto.ativo : 1,
-                token = dto.token,
                 tipo = dto.tipo,
                 acesso = dto.acesso
             };
@@ -103,6 +103,10 @@ namespace MinhaApi.Controllers
             // Hash da senha antes de persistir - evita FormatException ao verificar posteriormente
             var hasher = new PasswordHasher<Usuario>();
             novo.senha = hasher.HashPassword(novo, dto.senha);
+
+            // Prevenir erro MySQL: coluna 'token' não pode ser nula
+            // Atribui string vazia como valor padrão ao criar o usuário
+            novo.token = string.Empty;
 
             _context.Usuarios.Add(novo);
             _context.SaveChanges();
