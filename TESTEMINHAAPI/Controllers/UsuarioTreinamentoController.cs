@@ -66,6 +66,7 @@ namespace TESTEMINHAAPI.Controllers
         /// Valida existência do Usuário e do Treinamento e evita duplicatas.
         /// Retorna 200 com o registro criado ou 400 em caso de erro de validação.
         /// </remarks>
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(UsuarioTreinamento dto)
         {
@@ -104,7 +105,7 @@ namespace TESTEMINHAAPI.Controllers
         /// <remarks>
         /// Requer autorização. Se o registro não existir retorna 404.
         /// </remarks>
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, UsuarioTreinamento dto)
         {

@@ -22,7 +22,7 @@ namespace TESTEMINHAAPI.Controllers
             _context = context;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
@@ -33,7 +33,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(list);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
@@ -45,7 +45,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(item);
         }
 
-        [Authorize]
+        //[Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(UseTreinamentos dto)
         {
@@ -69,7 +69,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize]
+       // [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, UseTreinamentos dto)
         {
@@ -84,7 +84,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(new { sucesso = true, message = "Registro de matrícula atualizado", data = item });
         }
 
-        [Authorize(Roles = "3")]
+        //[Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

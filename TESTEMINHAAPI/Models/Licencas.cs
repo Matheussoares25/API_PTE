@@ -12,14 +12,13 @@ namespace TESTEMINHAAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int id { get; set; }
 
-        [Required]
         [MaxLength(200)]
         // valor do token/código que será fornecido ao cliente
-        public string token { get; set; }
+        public string? token { get; set; }
 
         // comprador/opcional: quando a licença for vendida pode apontar para o usuário
         public int? usuario_id { get; set; }
-        public Usuario usuario { get; set; }
+        public Usuario? usuario { get; set; }
 
         // data de emissão/criação do token
         public DateTime criado_em { get; set; }

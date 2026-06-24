@@ -40,7 +40,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(item);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Notas dto)
         {
@@ -64,7 +64,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Notas dto)
         {

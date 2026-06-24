@@ -48,7 +48,7 @@ namespace TESTEMINHAAPI.Controllers
         /// <summary>
         /// Cria uma nova candidatura.
         /// </summary>
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Candidaturas dto)
         {
@@ -87,7 +87,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Candidaturas dto)
         {

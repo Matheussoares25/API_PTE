@@ -23,37 +23,28 @@ namespace TESTEMINHAAPI.Controllers
         [HttpGet]
         public IActionResult BuscaTreinamentos()
         {
-            var tipouser = User.FindFirst("Tipo")?.Value;
-
-            if (tipouser == "2")
-            {
-                var treinamentos = _context.Treinamentos.ToList();
-                return Ok(treinamentos);
-            }
+                          
+           var treinamentos = _context.Treinamentos.ToList();
+           return Ok(treinamentos);
+            
 
             return BadRequest();
 
         }
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Treinamentos treinamento)
         {
-            var tipouser = User.FindFirst("Tipo")?.Value;
-            if (tipouser != "2") return BadRequest();
-
             treinamento.criado = DateTime.Now;
             _context.Treinamentos.Add(treinamento);
             _context.SaveChanges();
             return CreatedAtAction(nameof(BuscaTreinamentos), new { id = treinamento.id }, treinamento);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Treinamentos dto)
         {
-            var tipouser = User.FindFirst("Tipo")?.Value;
-            if (tipouser != "2") return BadRequest();
-
             var treino = _context.Treinamentos.FirstOrDefault(t => t.id == id);
             if (treino == null) return NotFound();
 
@@ -68,8 +59,6 @@ namespace TESTEMINHAAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var tipouser = User.FindFirst("Tipo")?.Value;
-            if (tipouser != "2") return BadRequest();
 
             var treino = _context.Treinamentos.FirstOrDefault(t => t.id == id);
             if (treino == null) return NotFound();

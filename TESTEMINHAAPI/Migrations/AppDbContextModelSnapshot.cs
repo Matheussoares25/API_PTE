@@ -8,7 +8,7 @@ using TESTEMINHAAPI.BancoDeDados;
 
 #nullable disable
 
-namespace TESTEMINHAAPI.Migrations
+namespace APIPTE.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot

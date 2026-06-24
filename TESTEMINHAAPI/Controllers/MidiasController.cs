@@ -47,7 +47,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(midia);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Midias dto)
         {
@@ -74,7 +74,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Midias dto)
         {

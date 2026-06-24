@@ -14,7 +14,7 @@ namespace TESTEMINHAAPI.Models
 
         public string conteudo { get; set; }
 
-        public DateTime data_noticia { get; set; }
+        public DateTime? data_noticia { get; set; }
 
         public int vaga { get; set; }
     }

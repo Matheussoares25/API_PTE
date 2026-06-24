@@ -41,6 +41,17 @@ namespace TESTEMINHAAPI.BancoDeDados
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Garantir que todas as propriedades de chave primária inteiras nomeadas "id" ou "Id"
+            // sejam geradas pelo banco ao inserir (auto-increment / ValueGeneratedOnAdd).
+            // Isso evita depender somente de atributos nas classes e padroniza o comportamento.
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var idProp = entityType.FindProperty("id") ?? entityType.FindProperty("Id");
+                if (idProp != null && idProp.ClrType == typeof(int))
+                {
+                    idProp.ValueGenerated = Microsoft.EntityFrameworkCore.Metadata.ValueGenerated.OnAdd;
+                }
+            }
 
             // Configura explicitamente a relação entre Licencas e Usuario usando a FK usuario_id
             modelBuilder.Entity<Licencas>(entity =>

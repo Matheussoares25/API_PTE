@@ -10,7 +10,7 @@ namespace TESTEMINHAAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "3")]
+    //[Authorize(Roles = "3")]
     public class LicencasController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -54,6 +54,7 @@ namespace TESTEMINHAAPI.Controllers
         // POST: api/licencas
         // Requer role 3 (admin) para criar licenças
         
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar([FromBody] Licencas dto)
         {
@@ -96,6 +97,7 @@ namespace TESTEMINHAAPI.Controllers
 
         // PUT: api/licencas/{id}
         // Atualiza parâmetros da licença. Requer role 3 (admin).
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Licencas dto)
         {

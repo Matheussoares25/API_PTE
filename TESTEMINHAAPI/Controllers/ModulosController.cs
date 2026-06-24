@@ -79,7 +79,7 @@ namespace TESTEMINHAAPI.Controllers
         /// <remarks>
         /// Valida existência do Treinamento; retorna 400 em caso de erro ou 200 com o objeto criado. Requer autorização.
         /// </remarks>
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Modulos dto)
         {
@@ -109,7 +109,7 @@ namespace TESTEMINHAAPI.Controllers
         /// <remarks>
         /// Valida existência do módulo e do Treinamento; retorna 404 se não existir, 400 para dados inválidos e 200 em caso de sucesso. Requer autorização.
         /// </remarks>
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Modulos dto)
         {

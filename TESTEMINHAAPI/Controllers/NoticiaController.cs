@@ -23,7 +23,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(noticias);
         }
 
-
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
@@ -37,14 +37,15 @@ namespace TESTEMINHAAPI.Controllers
         }
 
 
-
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Noticia noticia)
         {
+            noticia.data_noticia ??= DateTime.Now;
             _context.Noticias.Add(noticia);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
+            _context.SaveChanges();  
 
+            return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
         }
 
         [Authorize(Roles = "3")]
@@ -61,6 +62,7 @@ namespace TESTEMINHAAPI.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Noticia dto)
         {

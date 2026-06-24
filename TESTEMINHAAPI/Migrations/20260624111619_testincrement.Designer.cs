@@ -9,11 +9,11 @@ using TESTEMINHAAPI.BancoDeDados;
 
 #nullable disable
 
-namespace TESTEMINHAAPI.Migrations
+namespace APIPTE.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260623195024_rodando1")]
-    partial class rodando1
+    [Migration("20260624111619_testincrement")]
+    partial class testincrement
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

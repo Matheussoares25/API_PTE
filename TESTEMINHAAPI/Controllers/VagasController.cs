@@ -36,7 +36,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(vaga);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Vagas dto)
         {
@@ -58,7 +58,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Vagas dto)
         {

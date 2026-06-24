@@ -100,7 +100,7 @@ namespace TESTEMINHAAPI.Controllers
 
         [EndpointDescription("Não requer token JWT. Retorna um JWT válido após autenticação.")]
         [HttpPut("AtualizarAcesso")]
-        public IActionResult AtualizarAcesso(Usuario user)
+        public IActionResult AtualizarAcesso(LoginDto user)
         {
             var usuario = _context.Usuarios.FirstOrDefault(u => u.email == user.email);
 
