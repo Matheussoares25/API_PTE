@@ -36,7 +36,6 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<UseProva> UseProva { get; set; }
         public DbSet<UseTreinamentos> UseTreinamentos { get; set; }
 
-        public DbSet<UsuarioTreinamento> UsuarioTreinamentos { get; set; }
         public DbSet<Licencas> Licencas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

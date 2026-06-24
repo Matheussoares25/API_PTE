@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TESTEMINHAAPI.Models;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using TESTEMINHAAPI.BancoDeDados;
-using Microsoft.AspNetCore.Authorization;
+using TESTEMINHAAPI.DTOS;
+using TESTEMINHAAPI.Models;
 
 
 namespace MinhaApi.Controllers
@@ -60,6 +61,7 @@ namespace MinhaApi.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "2,3")]
         public IActionResult Atualizar(int id, [FromBody] Usuario usuarioAtualizado)
         {
             var UsuarioExistente = _context.Usuarios.FirstOrDefault(u => u.id == id);
@@ -111,7 +113,15 @@ namespace MinhaApi.Controllers
             _context.Usuarios.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(BuscarPorId), new { id = novo.id }, novo);
+            var retorno = new UsuarioDTO
+            {
+                id = novo.id,
+                nome = novo.nome,
+                email = novo.email,
+                ativo = novo.ativo,
+            };
+
+            return CreatedAtAction(nameof(BuscarPorId), new { id = novo.id }, retorno);
         }
     }
 }

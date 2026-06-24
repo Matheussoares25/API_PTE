@@ -17,7 +17,7 @@ namespace TESTEMINHAAPI.Models
         public int ativo { get; set; }
 
         [MaxLength(255)]
-        public string token { get; set; }
+        public string? token { get; set; }
 
         // Relação: usuário pode possuir licenças (tokens) adquiridas
         [System.Text.Json.Serialization.JsonIgnore]

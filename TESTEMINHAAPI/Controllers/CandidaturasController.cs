@@ -5,6 +5,7 @@ using TESTEMINHAAPI.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
+using TESTEMINHAAPI.DTOS;
 
 namespace TESTEMINHAAPI.Controllers
 {
@@ -19,7 +20,7 @@ namespace TESTEMINHAAPI.Controllers
             _context = context;
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
@@ -28,10 +29,29 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(c => c.usuario)
                 .ToList();
 
-            return Ok(candidaturas);
+            var resultado = candidaturas.Select(c => new
+            {
+                id = c.id,
+                vaga = c.vaga,
+                usuario = c.usuario != null ? new UsuarioDTO
+                {
+                    id = c.usuario.id,
+                    email = c.usuario.email,
+                    ativo = c.usuario.ativo,
+                    nome = c.usuario.nome
+                } : null,
+                nome = c.nome,
+                email = c.email,
+                telefone = c.telefone,
+                curriculo_url = c.curriculo_url,
+                status = c.status,
+                criado = c.criado
+            }).ToList();
+
+            return Ok(resultado);
         }
 
-        [Authorize]
+       // [Authorize]
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
@@ -42,13 +62,25 @@ namespace TESTEMINHAAPI.Controllers
 
             if (cand == null) return NotFound();
 
-            return Ok(cand);
-        }
+            var retorno = new
+            {
+                id = cand.id,
+                status = cand.status,
+                vaga = cand.vaga,
+                usuario = new
+                {
+                    id = cand.usuario.id,
+                    nome = cand.usuario.nome,
+                    email = cand.usuario.email,
+                }
+            };
 
+            return Ok(retorno);
+        }
         /// <summary>
         /// Cria uma nova candidatura.
         /// </summary>
-        [Authorize(Roles = "2,3")]
+        //[Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Candidaturas dto)
         {
@@ -87,7 +119,7 @@ namespace TESTEMINHAAPI.Controllers
             return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
         }
 
-        [Authorize(Roles = "2,3")]
+        //[Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Candidaturas dto)
         {
@@ -124,7 +156,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(new { sucesso = true, message = "Candidatura atualizada com sucesso", data = cand });
         }
 
-        [Authorize(Roles = "3")]
+      //  [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

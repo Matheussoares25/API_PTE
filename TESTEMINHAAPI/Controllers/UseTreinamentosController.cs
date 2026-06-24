@@ -58,7 +58,13 @@ namespace TESTEMINHAAPI.Controllers
             var usuarios = _context.UseTreinamentos
                 .Include(ut => ut.Usuario)
                 .Where(ut => ut.treinamento_id == treinamentoId)
-                .Select(ut => ut.Usuario)
+                .Select(ut => new UsuarioDTO 
+                { 
+                    id = ut.Usuario.id,
+                    email = ut.Usuario.email,
+                    ativo = ut.Usuario.ativo,
+                    nome = ut.Usuario.nome
+                })
                 .ToList();
 
             return Ok(usuarios);

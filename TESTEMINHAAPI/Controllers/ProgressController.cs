@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.DTOS;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,7 +28,24 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(p => p.usuario)
                 .Include(p => p.aula)
                 .ToList();
-            return Ok(list);
+
+            var resultado = list.Select(p => new
+            {
+                id = p.id,
+                usuario = new UsuarioDTO
+                {
+                    id = p.usuario.id,
+                    email = p.usuario.email,
+                    ativo = p.usuario.ativo,
+                    nome = p.usuario.nome
+                },
+                aula = p.aula,
+                percentual = p.percentual,
+                tempo_segundos = p.tempo_segundos,
+                atualizado_em = p.atualizado_em
+            }).ToList();
+
+            return Ok(resultado);
         }
 
         [Authorize]
@@ -39,7 +57,24 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(p => p.aula)
                 .FirstOrDefault(p => p.id == id);
             if (item == null) return NotFound();
-            return Ok(item);
+
+            var resultado = new
+            {
+                id = item.id,
+                usuario = new UsuarioDTO
+                {
+                    id = item.usuario.id,
+                    email = item.usuario.email,
+                    ativo = item.usuario.ativo,
+                    nome = item.usuario.nome
+                },
+                aula = item.aula,
+                percentual = item.percentual,
+                tempo_segundos = item.tempo_segundos,
+                atualizado_em = item.atualizado_em
+            };
+
+            return Ok(resultado);
         }
 
         // Usado para salvar progresso (ex.: quando assistir vídeo)

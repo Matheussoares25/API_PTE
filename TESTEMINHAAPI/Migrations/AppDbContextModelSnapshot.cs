@@ -573,7 +573,6 @@ namespace APIPTE.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("token")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("varchar(255)");
 
@@ -616,35 +615,6 @@ namespace APIPTE.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Vagas");
-                });
-
-            modelBuilder.Entity("UsuarioTreinamento", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<int>("treinamento_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("treinamentoid")
-                        .HasColumnType("int");
-
-                    b.Property<int>("usuario_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("usuarioid")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("treinamentoid");
-
-                    b.HasIndex("usuarioid");
-
-                    b.ToTable("UsuarioTreinamentos");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Alternativas", b =>
@@ -851,25 +821,6 @@ namespace APIPTE.Migrations
                     b.Navigation("Usuario");
 
                     b.Navigation("treinamento");
-                });
-
-            modelBuilder.Entity("UsuarioTreinamento", b =>
-                {
-                    b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
-                        .WithMany()
-                        .HasForeignKey("treinamentoid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("treinamento");
-
-                    b.Navigation("usuario");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Prova", b =>

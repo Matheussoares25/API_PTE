@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.DTOS;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,7 +27,23 @@ namespace TESTEMINHAAPI.Controllers
             var list = _context.Reports
                 .Include(r => r.usuario)
                 .ToList();
-            return Ok(list);
+
+            var resultado = list.Select(r => new
+            {
+                id = r.id,
+                usuario = new UsuarioDTO
+                {
+                    id = r.usuario.id,
+                    email = r.usuario.email,
+                    ativo = r.usuario.ativo,
+                    nome = r.usuario.nome
+                },
+                mensagem = r.mensagem,
+                tipo = r.tipo,
+                criado = r.criado
+            }).ToList();
+
+            return Ok(resultado);
         }
 
         [Authorize]
@@ -37,7 +54,23 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(r => r.usuario)
                 .FirstOrDefault(r => r.id == id);
             if (item == null) return NotFound();
-            return Ok(item);
+
+            var resultado = new
+            {
+                id = item.id,
+                usuario = new UsuarioDTO
+                {
+                    id = item.usuario.id,
+                    email = item.usuario.email,
+                    ativo = item.usuario.ativo,
+                    nome = item.usuario.nome
+                },
+                mensagem = item.mensagem,
+                tipo = item.tipo,
+                criado = item.criado
+            };
+
+            return Ok(resultado);
         }
 
         // salva reports dos usuarios

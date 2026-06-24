@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.DTOS;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -19,7 +20,7 @@ namespace TESTEMINHAAPI.Controllers
             _context = context;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
@@ -27,7 +28,23 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(c => c.usuario)
                 .Include(c => c.treinamento)
                 .ToList();
-            return Ok(list);
+
+            var resultado = list.Select(c => new
+            {
+                id = c.id,
+                usuario = new UsuarioDTO
+                {
+                    id = c.usuario.id,
+                    email = c.usuario.email,
+                    ativo = c.usuario.ativo,
+                    nome = c.usuario.nome
+                },
+                treinamento = c.treinamento,
+                codigo = c.codigo,
+                emitido_em = c.emitido_em
+            }).ToList();
+
+            return Ok(resultado);
         }
 
         [Authorize]
@@ -39,7 +56,23 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(c => c.treinamento)
                 .FirstOrDefault(c => c.id == id);
             if (item == null) return NotFound();
-            return Ok(item);
+
+            var resultado = new
+            {
+                id = item.id,
+                usuario = new UsuarioDTO
+                {
+                    id = item.usuario.id,
+                    email = item.usuario.email,
+                    ativo = item.usuario.ativo,
+                    nome = item.usuario.nome
+                },
+                treinamento = item.treinamento,
+                codigo = item.codigo,
+                emitido_em = item.emitido_em
+            };
+
+            return Ok(resultado);
         }
 
         [Authorize(Roles = "2,3")]

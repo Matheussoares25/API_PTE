@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace APIPTE.Migrations
 {
     /// <inheritdoc />
-    public partial class comforeignkeys : Migration
+    public partial class migrationcorreta : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,7 +61,7 @@ namespace APIPTE.Migrations
                     senha = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ativo = table.Column<int>(type: "int", nullable: false),
-                    token = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: false)
+                    token = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     tipo = table.Column<int>(type: "int", nullable: false),
                     nome = table.Column<string>(type: "longtext", nullable: false)
@@ -251,35 +251,6 @@ namespace APIPTE.Migrations
                     table.ForeignKey(
                         name: "FK_UseTreinamentos_Usuarios_usuario_id",
                         column: x => x.usuario_id,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "UsuarioTreinamentos",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
-                    treinamento_id = table.Column<int>(type: "int", nullable: false),
-                    treinamentoid = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UsuarioTreinamentos", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_UsuarioTreinamentos_Treinamentos_treinamentoid",
-                        column: x => x.treinamentoid,
-                        principalTable: "Treinamentos",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UsuarioTreinamentos_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -624,16 +595,6 @@ namespace APIPTE.Migrations
                 name: "IX_UseTreinamentos_usuario_id",
                 table: "UseTreinamentos",
                 column: "usuario_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuarioTreinamentos_treinamentoid",
-                table: "UsuarioTreinamentos",
-                column: "treinamentoid");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UsuarioTreinamentos_usuarioid",
-                table: "UsuarioTreinamentos",
-                column: "usuarioid");
         }
 
         /// <inheritdoc />
@@ -671,9 +632,6 @@ namespace APIPTE.Migrations
 
             migrationBuilder.DropTable(
                 name: "UseTreinamentos");
-
-            migrationBuilder.DropTable(
-                name: "UsuarioTreinamentos");
 
             migrationBuilder.DropTable(
                 name: "Questoes");

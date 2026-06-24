@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.DTOS;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -26,7 +27,23 @@ namespace TESTEMINHAAPI.Controllers
             var list = _context.UseProva
                 .Include(u => u.usuario)
                 .ToList();
-            return Ok(list);
+
+            var resultado = list.Select(u => new
+            {
+                id = u.id,
+                usuario = new UsuarioDTO
+                {
+                    id = u.usuario.id,
+                    email = u.usuario.email,
+                    ativo = u.usuario.ativo,
+                    nome = u.usuario.nome
+                },
+                prova_id = u.prova_id,
+                nota = u.nota,
+                realizado_em = u.realizado_em
+            }).ToList();
+
+            return Ok(resultado);
         }
 
         [Authorize]
@@ -37,7 +54,23 @@ namespace TESTEMINHAAPI.Controllers
                 .Include(u => u.usuario)
                 .FirstOrDefault(u => u.id == id);
             if (item == null) return NotFound();
-            return Ok(item);
+
+            var resultado = new
+            {
+                id = item.id,
+                usuario = new UsuarioDTO
+                {
+                    id = item.usuario.id,
+                    email = item.usuario.email,
+                    ativo = item.usuario.ativo,
+                    nome = item.usuario.nome
+                },
+                prova_id = item.prova_id,
+                nota = item.nota,
+                realizado_em = item.realizado_em
+            };
+
+            return Ok(resultado);
         }
 
         [Authorize]
