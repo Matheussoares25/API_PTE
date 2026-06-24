@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.DTOS;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -27,22 +28,54 @@ namespace TESTEMINHAAPI.Controllers
         public IActionResult Listar()
         {
             var list = _context.UseTreinamentos
-                .Include(u => u.usuario)
                 .Include(u => u.treinamento)
+                .Include(u => u.Usuario)                
                 .ToList();
-            return Ok(list);
+
+            var resultado = list.Select(ut => new 
+            {
+                id = ut.id,
+                usuario = new UsuarioDTO 
+                { 
+                    id = ut.Usuario.id,
+                    email = ut.Usuario.email,
+                    ativo = ut.Usuario.ativo,
+                    nome = ut.Usuario.nome
+                },
+                treinamento = ut.treinamento,
+                matriculado_em = ut.matriculado_em,
+                status = ut.status
+            }).ToList();
+
+            return Ok(resultado);
         }
 
-        //[Authorize]
-        [HttpGet("{id}")]
-        public IActionResult Obter(int id)
+        // Retorna todos os usuários associados a um Treinamento específico
+       // [Authorize]
+        [HttpGet("treinamento/{treinamentoId}/")]
+        public IActionResult UsuariosPorTreinamento(int treinamentoId)
         {
-            var item = _context.UseTreinamentos
-                .Include(u => u.usuario)
-                .Include(u => u.treinamento)
-                .FirstOrDefault(u => u.id == id);
-            if (item == null) return NotFound();
-            return Ok(item);
+            var usuarios = _context.UseTreinamentos
+                .Include(ut => ut.Usuario)
+                .Where(ut => ut.treinamento_id == treinamentoId)
+                .Select(ut => ut.Usuario)
+                .ToList();
+
+            return Ok(usuarios);
+        }
+
+        // Retorna todos os treinamentos associados a um Usuário (URL: usuario/{id})
+      //  [Authorize]
+        [HttpGet("usuario/{usuarioId}")]
+        public IActionResult TreinamentosPorUsuario(int usuarioId)
+        {
+            var treinamentos = _context.UseTreinamentos
+                .Include(ut => ut.treinamento)
+                .Where(ut => ut.usuario_id == usuarioId)
+                .Select(ut => ut.treinamento)
+                .ToList();
+
+            return Ok(treinamentos);
         }
 
         //[Authorize(Roles = "2,3")]
@@ -66,7 +99,7 @@ namespace TESTEMINHAAPI.Controllers
             _context.UseTreinamentos.Add(novo);
             _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
+            return Ok();
         }
 
        // [Authorize(Roles = "2,3")]

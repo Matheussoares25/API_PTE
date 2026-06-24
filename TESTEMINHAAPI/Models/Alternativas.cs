@@ -13,6 +13,7 @@ namespace TESTEMINHAAPI.Models
 
         // Relacionamento com Questoes
         public int questao_id { get; set; }
+        [ForeignKey("questao_id")]
         public Questoes questao { get; set; }
 
         [MaxLength(500)]

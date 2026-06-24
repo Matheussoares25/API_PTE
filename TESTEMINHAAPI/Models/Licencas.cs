@@ -18,6 +18,7 @@ namespace TESTEMINHAAPI.Models
 
         // comprador/opcional: quando a licença for vendida pode apontar para o usuário
         public int? usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario? usuario { get; set; }
 
         // data de emissão/criação do token

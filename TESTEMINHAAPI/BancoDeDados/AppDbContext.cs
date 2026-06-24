@@ -24,6 +24,7 @@ namespace TESTEMINHAAPI.BancoDeDados
 
         public DbSet<Aulas> Aulas { get; set; }
         public DbSet<Questoes> Questoes { get; set; }
+        public DbSet<Prova> Provas { get; set; }
         public DbSet<Midias> Midias { get; set; }
         public DbSet<Alternativas> Alternativas { get; set; }
         public DbSet<Vagas> Vagas { get; set; }

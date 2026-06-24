@@ -18,6 +18,7 @@ namespace TESTEMINHAAPI.Models
 
         // Relacionamento com Modulos
         public int modulo_id { get; set; }
+        [ForeignKey("modulo_id")]
         public Modulos modulo { get; set; }
 
         public DateTime criado { get; set; }

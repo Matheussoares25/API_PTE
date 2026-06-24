@@ -12,9 +12,13 @@ namespace TESTEMINHAAPI.Models
         public int id { get; set; }
 
         public int usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
         public int prova_id { get; set; }
+        [ForeignKey("prova_id")]
+        public Prova? prova { get; set; }
+
 
         public decimal nota { get; set; }
 

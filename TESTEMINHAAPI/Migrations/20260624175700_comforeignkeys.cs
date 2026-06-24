@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace APIPTE.Migrations
 {
     /// <inheritdoc />
-    public partial class testincrement : Migration
+    public partial class comforeignkeys : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,7 +25,7 @@ namespace APIPTE.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     conteudo = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    data_noticia = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    data_noticia = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     vaga = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -104,15 +104,42 @@ namespace APIPTE.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     nome = table.Column<string>(type: "varchar(125)", maxLength: 125, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    treinamento_id = table.Column<int>(type: "int", nullable: false),
-                    treinamentoid = table.Column<int>(type: "int", nullable: false)
+                    treinamento_id = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Modulos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Modulos_Treinamentos_treinamentoid",
-                        column: x => x.treinamentoid,
+                        name: "FK_Modulos_Treinamentos_treinamento_id",
+                        column: x => x.treinamento_id,
+                        principalTable: "Treinamentos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Provas",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    titulo = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    descricao = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    treinamento_id = table.Column<int>(type: "int", nullable: false),
+                    pontuacao_maxima = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Provas", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Provas_Treinamentos_treinamento_id",
+                        column: x => x.treinamento_id,
                         principalTable: "Treinamentos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -126,9 +153,7 @@ namespace APIPTE.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
                     treinamento_id = table.Column<int>(type: "int", nullable: false),
-                    treinamentoid = table.Column<int>(type: "int", nullable: false),
                     codigo = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     emitido_em = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -137,14 +162,14 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_Certificados", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Certificados_Treinamentos_treinamentoid",
-                        column: x => x.treinamentoid,
+                        name: "FK_Certificados_Treinamentos_treinamento_id",
+                        column: x => x.treinamento_id,
                         principalTable: "Treinamentos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Certificados_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
+                        name: "FK_Certificados_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -178,38 +203,12 @@ namespace APIPTE.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Notas",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
-                    prova_id = table.Column<int>(type: "int", nullable: true),
-                    treinamento_id = table.Column<int>(type: "int", nullable: true),
-                    valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notas", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Notas_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
                     mensagem = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     tipo = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: false)
@@ -220,32 +219,8 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_Reports", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Reports_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
-                        principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "UseProva",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
-                    prova_id = table.Column<int>(type: "int", nullable: false),
-                    nota = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    realizado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UseProva", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_UseProva_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
+                        name: "FK_Reports_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -259,9 +234,7 @@ namespace APIPTE.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
                     treinamento_id = table.Column<int>(type: "int", nullable: false),
-                    treinamentoid = table.Column<int>(type: "int", nullable: false),
                     matriculado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -270,14 +243,14 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_UseTreinamentos", x => x.id);
                     table.ForeignKey(
-                        name: "FK_UseTreinamentos_Treinamentos_treinamentoid",
-                        column: x => x.treinamentoid,
+                        name: "FK_UseTreinamentos_Treinamentos_treinamento_id",
+                        column: x => x.treinamento_id,
                         principalTable: "Treinamentos",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UseTreinamentos_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
+                        name: "FK_UseTreinamentos_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -320,9 +293,7 @@ namespace APIPTE.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     vaga_id = table.Column<int>(type: "int", nullable: false),
-                    vagaid = table.Column<int>(type: "int", nullable: false),
                     usuario_id = table.Column<int>(type: "int", nullable: true),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
                     nome = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
@@ -339,14 +310,13 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_Candidaturas", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Candidaturas_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
+                        name: "FK_Candidaturas_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
                         principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "id");
                     table.ForeignKey(
-                        name: "FK_Candidaturas_Vagas_vagaid",
-                        column: x => x.vagaid,
+                        name: "FK_Candidaturas_Vagas_vaga_id",
+                        column: x => x.vaga_id,
                         principalTable: "Vagas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -364,16 +334,73 @@ namespace APIPTE.Migrations
                     conteudo = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     modulo_id = table.Column<int>(type: "int", nullable: false),
-                    moduloid = table.Column<int>(type: "int", nullable: false),
                     criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Aulas", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Aulas_Modulos_moduloid",
-                        column: x => x.moduloid,
+                        name: "FK_Aulas_Modulos_modulo_id",
+                        column: x => x.modulo_id,
                         principalTable: "Modulos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Notas",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    usuario_id = table.Column<int>(type: "int", nullable: false),
+                    prova_id = table.Column<int>(type: "int", nullable: true),
+                    treinamento_id = table.Column<int>(type: "int", nullable: true),
+                    valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notas", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Notas_Provas_prova_id",
+                        column: x => x.prova_id,
+                        principalTable: "Provas",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_Notas_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "UseProva",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    usuario_id = table.Column<int>(type: "int", nullable: false),
+                    prova_id = table.Column<int>(type: "int", nullable: false),
+                    nota = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    realizado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UseProva", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_UseProva_Provas_prova_id",
+                        column: x => x.prova_id,
+                        principalTable: "Provas",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UseProva_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
+                        principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -392,15 +419,14 @@ namespace APIPTE.Migrations
                     tipo = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     aula_id = table.Column<int>(type: "int", nullable: false),
-                    aulaid = table.Column<int>(type: "int", nullable: false),
                     criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Midias", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Midias_Aulas_aulaid",
-                        column: x => x.aulaid,
+                        name: "FK_Midias_Aulas_aula_id",
+                        column: x => x.aula_id,
                         principalTable: "Aulas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -414,9 +440,7 @@ namespace APIPTE.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
-                    usuarioid = table.Column<int>(type: "int", nullable: false),
                     aula_id = table.Column<int>(type: "int", nullable: false),
-                    aulaid = table.Column<int>(type: "int", nullable: false),
                     percentual = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     tempo_segundos = table.Column<int>(type: "int", nullable: false),
                     atualizado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -425,14 +449,14 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_Progress", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Progress_Aulas_aulaid",
-                        column: x => x.aulaid,
+                        name: "FK_Progress_Aulas_aula_id",
+                        column: x => x.aula_id,
                         principalTable: "Aulas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Progress_Usuarios_usuarioid",
-                        column: x => x.usuarioid,
+                        name: "FK_Progress_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
                         principalTable: "Usuarios",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -448,16 +472,22 @@ namespace APIPTE.Migrations
                     texto = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     aula_id = table.Column<int>(type: "int", nullable: false),
-                    aulaid = table.Column<int>(type: "int", nullable: false),
+                    prova_id = table.Column<int>(type: "int", nullable: false),
                     criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questoes", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Questoes_Aulas_aulaid",
-                        column: x => x.aulaid,
+                        name: "FK_Questoes_Aulas_aula_id",
+                        column: x => x.aula_id,
                         principalTable: "Aulas",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Questoes_Provas_prova_id",
+                        column: x => x.prova_id,
+                        principalTable: "Provas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -470,7 +500,6 @@ namespace APIPTE.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     questao_id = table.Column<int>(type: "int", nullable: false),
-                    questaoid = table.Column<int>(type: "int", nullable: false),
                     texto = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     url = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
@@ -483,8 +512,8 @@ namespace APIPTE.Migrations
                 {
                     table.PrimaryKey("PK_Alternativas", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Alternativas_Questoes_questaoid",
-                        column: x => x.questaoid,
+                        name: "FK_Alternativas_Questoes_questao_id",
+                        column: x => x.questao_id,
                         principalTable: "Questoes",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
@@ -492,34 +521,34 @@ namespace APIPTE.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Alternativas_questaoid",
+                name: "IX_Alternativas_questao_id",
                 table: "Alternativas",
-                column: "questaoid");
+                column: "questao_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Aulas_moduloid",
+                name: "IX_Aulas_modulo_id",
                 table: "Aulas",
-                column: "moduloid");
+                column: "modulo_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Candidaturas_usuarioid",
+                name: "IX_Candidaturas_usuario_id",
                 table: "Candidaturas",
-                column: "usuarioid");
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Candidaturas_vagaid",
+                name: "IX_Candidaturas_vaga_id",
                 table: "Candidaturas",
-                column: "vagaid");
+                column: "vaga_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Certificados_treinamentoid",
+                name: "IX_Certificados_treinamento_id",
                 table: "Certificados",
-                column: "treinamentoid");
+                column: "treinamento_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Certificados_usuarioid",
+                name: "IX_Certificados_usuario_id",
                 table: "Certificados",
-                column: "usuarioid");
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Licencas_usuario_id",
@@ -527,54 +556,74 @@ namespace APIPTE.Migrations
                 column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Midias_aulaid",
+                name: "IX_Midias_aula_id",
                 table: "Midias",
-                column: "aulaid");
+                column: "aula_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Modulos_treinamentoid",
+                name: "IX_Modulos_treinamento_id",
                 table: "Modulos",
-                column: "treinamentoid");
+                column: "treinamento_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notas_usuarioid",
+                name: "IX_Notas_prova_id",
                 table: "Notas",
-                column: "usuarioid");
+                column: "prova_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Progress_aulaid",
+                name: "IX_Notas_usuario_id",
+                table: "Notas",
+                column: "usuario_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Progress_aula_id",
                 table: "Progress",
-                column: "aulaid");
+                column: "aula_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Progress_usuarioid",
+                name: "IX_Progress_usuario_id",
                 table: "Progress",
-                column: "usuarioid");
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questoes_aulaid",
+                name: "IX_Provas_treinamento_id",
+                table: "Provas",
+                column: "treinamento_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Questoes_aula_id",
                 table: "Questoes",
-                column: "aulaid");
+                column: "aula_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Reports_usuarioid",
+                name: "IX_Questoes_prova_id",
+                table: "Questoes",
+                column: "prova_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_usuario_id",
                 table: "Reports",
-                column: "usuarioid");
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UseProva_usuarioid",
+                name: "IX_UseProva_prova_id",
                 table: "UseProva",
-                column: "usuarioid");
+                column: "prova_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UseTreinamentos_treinamentoid",
-                table: "UseTreinamentos",
-                column: "treinamentoid");
+                name: "IX_UseProva_usuario_id",
+                table: "UseProva",
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UseTreinamentos_usuarioid",
+                name: "IX_UseTreinamentos_treinamento_id",
                 table: "UseTreinamentos",
-                column: "usuarioid");
+                column: "treinamento_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UseTreinamentos_usuario_id",
+                table: "UseTreinamentos",
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UsuarioTreinamentos_treinamentoid",
@@ -637,6 +686,9 @@ namespace APIPTE.Migrations
 
             migrationBuilder.DropTable(
                 name: "Aulas");
+
+            migrationBuilder.DropTable(
+                name: "Provas");
 
             migrationBuilder.DropTable(
                 name: "Modulos");

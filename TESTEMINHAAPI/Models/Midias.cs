@@ -24,6 +24,7 @@ namespace TESTEMINHAAPI.Models
 
         // Relacionamento com Aulas
         public int aula_id { get; set; }
+        [ForeignKey("aula_id")]
         public Aulas aula { get; set; }
 
         public DateTime criado { get; set; }

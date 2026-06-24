@@ -42,9 +42,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("questao_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("questaoid")
-                        .HasColumnType("int");
-
                     b.Property<string>("texto")
                         .IsRequired()
                         .HasMaxLength(500)
@@ -57,7 +54,7 @@ namespace APIPTE.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("questaoid");
+                    b.HasIndex("questao_id");
 
                     b.ToTable("Alternativas");
                 });
@@ -80,9 +77,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("modulo_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("moduloid")
-                        .HasColumnType("int");
-
                     b.Property<string>("nome")
                         .IsRequired()
                         .HasMaxLength(125)
@@ -90,7 +84,7 @@ namespace APIPTE.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("moduloid");
+                    b.HasIndex("modulo_id");
 
                     b.ToTable("Aulas");
                 });
@@ -134,20 +128,14 @@ namespace APIPTE.Migrations
                     b.Property<int?>("usuario_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("usuarioid")
-                        .HasColumnType("int");
-
                     b.Property<int>("vaga_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("vagaid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("usuario_id");
 
-                    b.HasIndex("vagaid");
+                    b.HasIndex("vaga_id");
 
                     b.ToTable("Candidaturas");
                 });
@@ -171,20 +159,14 @@ namespace APIPTE.Migrations
                     b.Property<int>("treinamento_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("treinamentoid")
-                        .HasColumnType("int");
-
                     b.Property<int>("usuario_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("usuarioid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("treinamentoid");
+                    b.HasIndex("treinamento_id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("usuario_id");
 
                     b.ToTable("Certificados");
                 });
@@ -240,9 +222,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("aula_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("aulaid")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("criado")
                         .HasColumnType("datetime(6)");
 
@@ -263,7 +242,7 @@ namespace APIPTE.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("aulaid");
+                    b.HasIndex("aula_id");
 
                     b.ToTable("Midias");
                 });
@@ -284,12 +263,9 @@ namespace APIPTE.Migrations
                     b.Property<int>("treinamento_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("treinamentoid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
-                    b.HasIndex("treinamentoid");
+                    b.HasIndex("treinamento_id");
 
                     b.ToTable("Modulos");
                 });
@@ -314,15 +290,14 @@ namespace APIPTE.Migrations
                     b.Property<int>("usuario_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("usuarioid")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("valor")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("prova_id");
+
+                    b.HasIndex("usuario_id");
 
                     b.ToTable("Notas");
                 });
@@ -339,7 +314,7 @@ namespace APIPTE.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("data_noticia")
+                    b.Property<DateTime?>("data_noticia")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("titulo")
@@ -368,9 +343,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("aula_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("aulaid")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("percentual")
                         .HasColumnType("decimal(65,30)");
 
@@ -380,16 +352,51 @@ namespace APIPTE.Migrations
                     b.Property<int>("usuario_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("usuarioid")
+                    b.HasKey("id");
+
+                    b.HasIndex("aula_id");
+
+                    b.HasIndex("usuario_id");
+
+                    b.ToTable("Progress");
+                });
+
+            modelBuilder.Entity("TESTEMINHAAPI.Models.Prova", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("criado")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("descricao")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("pontuacao_maxima")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<string>("status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<int>("treinamento_id")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("aulaid");
+                    b.HasIndex("treinamento_id");
 
-                    b.HasIndex("usuarioid");
-
-                    b.ToTable("Progress");
+                    b.ToTable("Provas");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Questoes", b =>
@@ -403,11 +410,11 @@ namespace APIPTE.Migrations
                     b.Property<int>("aula_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("aulaid")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("criado")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int>("prova_id")
+                        .HasColumnType("int");
 
                     b.Property<string>("texto")
                         .IsRequired()
@@ -416,7 +423,9 @@ namespace APIPTE.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("aulaid");
+                    b.HasIndex("aula_id");
+
+                    b.HasIndex("prova_id");
 
                     b.ToTable("Questoes");
                 });
@@ -445,12 +454,9 @@ namespace APIPTE.Migrations
                     b.Property<int>("usuario_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("usuarioid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("usuario_id");
 
                     b.ToTable("Reports");
                 });
@@ -496,12 +502,11 @@ namespace APIPTE.Migrations
                     b.Property<int>("usuario_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("usuarioid")
-                        .HasColumnType("int");
-
                     b.HasKey("id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("prova_id");
+
+                    b.HasIndex("usuario_id");
 
                     b.ToTable("UseProva");
                 });
@@ -525,20 +530,14 @@ namespace APIPTE.Migrations
                     b.Property<int>("treinamento_id")
                         .HasColumnType("int");
 
-                    b.Property<int>("treinamentoid")
-                        .HasColumnType("int");
-
                     b.Property<int>("usuario_id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("usuarioid")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("treinamentoid");
+                    b.HasIndex("treinamento_id");
 
-                    b.HasIndex("usuarioid");
+                    b.HasIndex("usuario_id");
 
                     b.ToTable("UseTreinamentos");
                 });
@@ -652,7 +651,7 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Questoes", "questao")
                         .WithMany("alternativas")
-                        .HasForeignKey("questaoid")
+                        .HasForeignKey("questao_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -663,7 +662,7 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Modulos", "modulo")
                         .WithMany()
-                        .HasForeignKey("moduloid")
+                        .HasForeignKey("modulo_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -674,13 +673,11 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("usuario_id");
 
                     b.HasOne("TESTEMINHAAPI.Models.Vagas", "vaga")
                         .WithMany()
-                        .HasForeignKey("vagaid")
+                        .HasForeignKey("vaga_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -693,13 +690,13 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
                         .WithMany()
-                        .HasForeignKey("treinamentoid")
+                        .HasForeignKey("treinamento_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("usuario_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -723,7 +720,7 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Aulas", "aula")
                         .WithMany()
-                        .HasForeignKey("aulaid")
+                        .HasForeignKey("aula_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -734,7 +731,7 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
                         .WithMany()
-                        .HasForeignKey("treinamentoid")
+                        .HasForeignKey("treinamento_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -743,11 +740,17 @@ namespace APIPTE.Migrations
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Notas", b =>
                 {
+                    b.HasOne("TESTEMINHAAPI.Models.Prova", "prova")
+                        .WithMany("notas")
+                        .HasForeignKey("prova_id");
+
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("usuario_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("prova");
 
                     b.Navigation("usuario");
                 });
@@ -756,13 +759,13 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Aulas", "aula")
                         .WithMany()
-                        .HasForeignKey("aulaid")
+                        .HasForeignKey("aula_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("usuario_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -771,22 +774,41 @@ namespace APIPTE.Migrations
                     b.Navigation("usuario");
                 });
 
+            modelBuilder.Entity("TESTEMINHAAPI.Models.Prova", b =>
+                {
+                    b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
+                        .WithMany()
+                        .HasForeignKey("treinamento_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("treinamento");
+                });
+
             modelBuilder.Entity("TESTEMINHAAPI.Models.Questoes", b =>
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Aulas", "aula")
                         .WithMany()
-                        .HasForeignKey("aulaid")
+                        .HasForeignKey("aula_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TESTEMINHAAPI.Models.Prova", "prova")
+                        .WithMany("questoes")
+                        .HasForeignKey("prova_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("aula");
+
+                    b.Navigation("prova");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Reports", b =>
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("usuario_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -795,11 +817,19 @@ namespace APIPTE.Migrations
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.UseProva", b =>
                 {
-                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
+                    b.HasOne("TESTEMINHAAPI.Models.Prova", "prova")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("prova_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
+                        .WithMany()
+                        .HasForeignKey("usuario_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("prova");
 
                     b.Navigation("usuario");
                 });
@@ -808,19 +838,19 @@ namespace APIPTE.Migrations
                 {
                     b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
                         .WithMany()
-                        .HasForeignKey("treinamentoid")
+                        .HasForeignKey("treinamento_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "usuario")
+                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "Usuario")
                         .WithMany()
-                        .HasForeignKey("usuarioid")
+                        .HasForeignKey("usuario_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Usuario");
 
                     b.Navigation("treinamento");
-
-                    b.Navigation("usuario");
                 });
 
             modelBuilder.Entity("UsuarioTreinamento", b =>
@@ -840,6 +870,13 @@ namespace APIPTE.Migrations
                     b.Navigation("treinamento");
 
                     b.Navigation("usuario");
+                });
+
+            modelBuilder.Entity("TESTEMINHAAPI.Models.Prova", b =>
+                {
+                    b.Navigation("notas");
+
+                    b.Navigation("questoes");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Questoes", b =>

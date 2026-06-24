@@ -12,6 +12,7 @@ namespace TESTEMINHAAPI.Models
         public int id { get; set; }
 
         public int usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
         [MaxLength(500)]

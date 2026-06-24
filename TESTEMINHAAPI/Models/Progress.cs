@@ -12,10 +12,12 @@ namespace TESTEMINHAAPI.Models
         public int id { get; set; }
 
         public int usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
         // Relacionamento com Aula
         public int aula_id { get; set; }
+        [ForeignKey("aula_id")]
         public Aulas aula { get; set; }
 
         // Progresso em percentual (0-100)

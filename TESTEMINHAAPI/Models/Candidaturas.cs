@@ -13,10 +13,12 @@ namespace TESTEMINHAAPI.Models
 
         // Relacionamento com Vagas
         public int vaga_id { get; set; }
+        [ForeignKey("vaga_id")]
         public Vagas vaga { get; set; }
 
         // Opcional: relacionamento com Usuario (se candidato for um usuário do sistema)
         public int? usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
         [MaxLength(150)]

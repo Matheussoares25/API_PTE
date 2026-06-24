@@ -12,9 +12,11 @@ namespace TESTEMINHAAPI.Models
         public int id { get; set; }
 
         public int usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
         public int treinamento_id { get; set; }
+        [ForeignKey("treinamento_id")]
         public Treinamentos treinamento { get; set; }
 
         [MaxLength(200)]

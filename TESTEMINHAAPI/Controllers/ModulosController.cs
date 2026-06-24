@@ -4,6 +4,7 @@ using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace TESTEMINHAAPI.Controllers
 {
@@ -12,6 +13,8 @@ namespace TESTEMINHAAPI.Controllers
     public class ModulosController : ControllerBase
     {
         private readonly AppDbContext _context;
+
+        
 
         public ModulosController(AppDbContext context)
         {

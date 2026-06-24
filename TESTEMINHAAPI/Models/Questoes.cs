@@ -16,7 +16,13 @@ namespace TESTEMINHAAPI.Models
 
         // Relacionamento com Aulas
         public int aula_id { get; set; }
+        [ForeignKey("aula_id")]
         public Aulas aula { get; set; }
+
+        // Relacionamento com Prova
+        public int prova_id { get; set; }
+        [ForeignKey("prova_id")]
+        public Prova prova { get; set; }
 
         // Alternativas relacionadas a esta questão
         public ICollection<Alternativas> alternativas { get; set; }

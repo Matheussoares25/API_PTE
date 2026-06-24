@@ -12,10 +12,15 @@ namespace TESTEMINHAAPI.Models
         public int id { get; set; }
 
         public int usuario_id { get; set; }
+        [ForeignKey("usuario_id")]
         public Usuario usuario { get; set; }
 
-        // opcional: relacionar a prova, aula ou treinamento
+        // Relacionamento com Prova
         public int? prova_id { get; set; }
+        [ForeignKey("prova_id")]
+        public Prova prova { get; set; }
+
+        // Relacionamento com Treinamento (opcional)
         public int? treinamento_id { get; set; }
 
         public decimal valor { get; set; }
