@@ -73,6 +73,8 @@ namespace MinhaApi.Controllers
             UsuarioExistente.nome = usuarioAtualizado.nome;
             UsuarioExistente.email = usuarioAtualizado.email;
 
+
+
             _context.SaveChanges();
             return Ok(UsuarioExistente);
         }

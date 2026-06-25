@@ -41,11 +41,12 @@ namespace TESTEMINHAAPI.Controllers
         [HttpPost]
         public IActionResult Criar(Noticia noticia)
         {
-            noticia.data_noticia ??= DateTime.Now;
-            _context.Noticias.Add(noticia);
-            _context.SaveChanges();  
+                noticia.data_noticia ??= DateTime.Now;
+                _context.Noticias.Add(noticia);
+                _context.SaveChanges();
 
-            return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
+                return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
+            
         }
 
         [Authorize(Roles = "3")]

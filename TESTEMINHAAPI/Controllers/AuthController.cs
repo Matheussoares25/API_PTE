@@ -90,6 +90,7 @@ namespace TESTEMINHAAPI.Controllers
                     usuario.nome,
                     usuario.email,
                     usuario.acesso,
+                    usuario.tipo,
                 },
                 Token = novoToken
             });
