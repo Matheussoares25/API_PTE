@@ -28,9 +28,17 @@ namespace TESTEMINHAAPI.Controllers
            return Ok(treinamentos);
             
 
-            return BadRequest();
-
         }
+
+        [Authorize]
+        [HttpGet("{id}")]
+        public IActionResult BuscarPorId(int id)
+        {
+            var treino = _context.Treinamentos.FirstOrDefault(t => t.id == id);
+            if (treino == null) return NotFound();
+            return Ok(treino);
+        }
+
         [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Treinamentos treinamento)
@@ -38,7 +46,7 @@ namespace TESTEMINHAAPI.Controllers
             treinamento.criado = DateTime.Now;
             _context.Treinamentos.Add(treinamento);
             _context.SaveChanges();
-            return CreatedAtAction(nameof(BuscaTreinamentos), new { id = treinamento.id }, treinamento);
+            return CreatedAtAction(nameof(BuscarPorId), new { id = treinamento.id }, treinamento);
         }
 
         [Authorize(Roles = "2,3")]
