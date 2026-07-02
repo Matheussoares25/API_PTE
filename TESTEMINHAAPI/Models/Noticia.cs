@@ -1,15 +1,21 @@
-﻿namespace TESTEMINHAAPI.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace TESTEMINHAAPI.Models
 {
     public class Noticia
     {
-        public int Id { get; set; }
-        
-        public string Titulo { get; set; }
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int id { get; set; }
 
-        public string Conteudo { get; set; }
+        public string titulo { get; set; }
 
-        public DateTime data_noticia { get; set; }
+        public string conteudo { get; set; }
 
-        public int Vaga { get; set; }
+        public DateTime? data_noticia { get; set; }
+
+        public int vaga { get; set; }
     }
 }

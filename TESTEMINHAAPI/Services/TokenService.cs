@@ -18,10 +18,10 @@ namespace TESTEMINHAAPI.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("Id", user.Id.ToString()),
-                    new Claim("Nome", user.Nome),
-                    new Claim("Email", user.Email),
-                    new Claim("Tipo", user.Tipo.ToString())
+                    new Claim("Id", user.id.ToString()),
+                    new Claim("Nome", user.nome),
+                    new Claim("Email", user.email),
+                    new Claim(ClaimTypes.Role, user.tipo.ToString())
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(1),

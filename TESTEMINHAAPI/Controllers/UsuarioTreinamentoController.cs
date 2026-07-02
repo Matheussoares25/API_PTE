@@ -1,0 +1,142 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using TESTEMINHAAPI.BancoDeDados;
+using TESTEMINHAAPI.Models;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+namespace TESTEMINHAAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    // Controller para gerenciar associação simples usuário-treinamento.
+    // UsuarioTreinamento representa apenas o relacionamento (sem data/status).
+    // Use este controller quando precisar apenas ligar usuários a treinamentos sem metadados.
+    public class UsuarioTreinamentoController : ControllerBase
+    {
+        private readonly AppDbContext _context;
+
+        public UsuarioTreinamentoController(AppDbContext context)
+        {
+            _context = context;
+        }
+
+
+        [HttpGet("usuario/{id}")]
+        public IActionResult Obter(int id)
+        {
+            // Busca todos os registros do usuário pelo UsuarioId
+            var usuarioTreinos = _context.UsuarioTreinamentos
+                .Include(ut => ut.usuario)
+                .Include(ut => ut.treinamento)
+                .Where(ut => ut.usuario_id == id)
+                .ToList();
+            // Retorna lista (pode ser vazia) em vez de 404, para facilitar o consumo pelo cliente
+            return Ok(usuarioTreinos);
+        }
+
+
+        /// <summary>
+        /// Retorna os usuários associados a um Treinamento específico.
+        /// </summary>
+        /// <remarks>
+        /// Busca relacionamentos por TreinamentoId e projeta apenas os objetos Usuario.
+        /// Retorna 200 com uma lista de usuários (pode ser vazia).
+        /// </remarks>
+        [HttpGet("treinamento/{treinamentoId}")]
+        public IActionResult ObterUsuariosPorTreinamento(int treinamentoId)
+        {
+            // Busca todos os relacionamentos pelo TreinamentoId e projeta apenas os usuários
+            var usuarios = _context.UsuarioTreinamentos
+                .Include(ut => ut.usuario)
+                .Where(ut => ut.treinamento_id == treinamentoId)
+                .Select(ut => ut.usuario)
+                .ToList();
+
+            // Retorna lista (pode ser vazia) em vez de 404
+            return Ok(usuarios);
+        }
+
+       
+
+        /// <summary>
+        /// Cria um novo relacionamento entre um Usuário e um Treinamento.
+        /// </summary>
+        /// <remarks>
+        /// Valida existência do Usuário e do Treinamento e evita duplicatas.
+        /// Retorna 200 com o registro criado ou 400 em caso de erro de validação.
+        /// </remarks>
+        [Authorize(Roles = "2,3")]
+        [HttpPost]
+        public IActionResult Criar(UsuarioTreinamento dto)
+        {
+            if (dto == null) return BadRequest();
+
+            var usuarioExiste = _context.Usuarios.Any(u => u.id == dto.usuario_id);
+            var treinamentoExiste = _context.Treinamentos.Any(t => t.id == dto.treinamento_id);
+
+            if (!usuarioExiste || !treinamentoExiste)
+            {
+                return BadRequest(new { sucesso = false, message = "Usuário ou Treinamento inexistente" });
+            }
+
+            // Evita duplicatas (mesmo UsuarioId e TreinamentoId)
+            var jaExiste = _context.UsuarioTreinamentos.Any(ut => ut.usuario_id == dto.usuario_id && ut.treinamento_id == dto.treinamento_id);
+            if (jaExiste)
+            {
+                return BadRequest(new { sucesso = false, message = "Relacionamento já existe" });
+            }
+
+            var novo = new UsuarioTreinamento
+            {
+                usuario_id = dto.usuario_id,
+                treinamento_id = dto.treinamento_id
+            };
+
+            _context.UsuarioTreinamentos.Add(novo);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(Obter), new { id = novo.id }, new { sucesso = true, message = "Usuário-Treinamento criado com sucesso", data = novo });
+        }
+
+        /// <summary>
+        /// Atualiza um relacionamento UsuarioTreinamento existente pelo Id.
+        /// </summary>
+        /// <remarks>
+        /// Requer autorização. Se o registro não existir retorna 404.
+        /// </remarks>
+        [Authorize(Roles = "2,3")]
+        [HttpPut("{id}")]
+        public IActionResult Editar(int id, UsuarioTreinamento dto)
+        {
+            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.id == id);
+            if (item == null) return NotFound();
+
+            item.usuario_id = dto.usuario_id;
+            item.treinamento_id = dto.treinamento_id;
+
+            _context.SaveChanges();
+
+            return Ok(new { successo = true, message = "Usuário-Treinamento atualizado com sucesso", data = item });
+        }
+
+        /// <summary>
+        /// Remove um relacionamento UsuarioTreinamento pelo Id.
+        /// </summary>
+        /// <remarks>
+        /// Requer autorização. Retorna 404 se não encontrado e 200 em caso de sucesso.
+        /// </remarks>
+        [Authorize(Roles = "3")]
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var item = _context.UsuarioTreinamentos.FirstOrDefault(ut => ut.id == id);
+            if (item == null) return NotFound();
+
+            _context.UsuarioTreinamentos.Remove(item);
+            _context.SaveChanges();
+
+            return NoContent();
+        }
+    }
+}

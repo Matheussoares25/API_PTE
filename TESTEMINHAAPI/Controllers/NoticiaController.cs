@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TESTEMINHAAPI.Models;
 using TESTEMINHAAPI.BancoDeDados;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TESTEMINHAAPI.Controllers
 {
@@ -14,67 +15,121 @@ namespace TESTEMINHAAPI.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
-            var Treinamentos = _context.Noticias.ToList();
-            return Ok(Treinamentos);
+            try
+            {
+                var noticias = _context.Noticias.ToList();
+                return Ok(noticias);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocorreu um erro ao listar as notícias.", erro = ex.Message });
+            }
         }
+
+        [Authorize]
         [HttpGet("{id}")]
         public IActionResult Obter(int id)
         {
-            var Treinamento = _context.Noticias.FirstOrDefault(t => t.Id == id);
-            if (Treinamento == null)
+            try
             {
-                return NotFound();
+                var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
+                // No-op null handling: preserve 404 response for missing noticia
+                if (noticia == null)
+                {
+                    return NotFound();
+                }
+                return Ok(noticia);
             }
-            return Ok(Treinamento);
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocorreu um erro ao obter a notícia.", erro = ex.Message });
+            }
         }
 
+
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Noticia noticia)
         {
-            _context.Noticias.Add(noticia);
-            _context.SaveChanges();
-            return Ok(new { successo = true, message = "Noticia Criada com Sucesso" });
+            try
+            {
+                if (noticia == null)
+                {
+                    return BadRequest(new { message = "Dados da notícia inválidos." });
+                }
 
+                if (string.IsNullOrWhiteSpace(noticia.titulo))
+                {
+                    return BadRequest(new { message = "Título é obrigatório." });
+                }
+
+                noticia.data_noticia ??= DateTime.Now;
+                _context.Noticias.Add(noticia);
+                _context.SaveChanges();
+
+                return CreatedAtAction(nameof(Obter), new { id = noticia.id }, noticia);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocorreu um erro ao criar a notícia.", erro = ex.Message });
+            }
         }
 
+        [Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var noticia = _context.Noticias.FirstOrDefault(t => t.Id == id);
-            if (noticia == null)
+            try
             {
-                return NotFound();
+                var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
+                if (noticia == null)
+                {
+                    return NotFound();
+                }
+                _context.Noticias.Remove(noticia);
+                _context.SaveChanges();
+                return NoContent();
             }
-            _context.Noticias.Remove(noticia);
-            _context.SaveChanges();
-            return Ok(new {successo = true, message = "Noticia Apagada"});
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Ocorreu um erro ao deletar a notícia.", erro = ex.Message });
+            }
         }
 
+        [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
         public IActionResult Editar(int id, Noticia dto)
         {
-            var noticia = _context.Noticias.FirstOrDefault(t => t.Id == id);
-
-            if (noticia == null)
+            try
             {
-                return NotFound();
+                var noticia = _context.Noticias.FirstOrDefault(t => t.id == id);
+
+                if (noticia == null)
+                {
+                    return NotFound();
+                }
+
+                noticia.titulo = dto.titulo;
+                noticia.conteudo = dto.conteudo;
+                noticia.vaga = dto.vaga;
+
+                _context.SaveChanges();
+
+                return Ok(new
+                {
+                    successo = true,
+                    message = "Notícia atualizada com sucesso",
+                    data = noticia
+                });
             }
-
-            noticia.Titulo = dto.Titulo;
-            noticia.Conteudo = dto.Conteudo;
-            noticia.Vaga = dto.Vaga;
-
-            _context.SaveChanges();
-
-            return Ok(new
+            catch (Exception ex)
             {
-                successo = true,
-                message = "Notícia atualizada com sucesso",
-                data = noticia
-            });
+                return StatusCode(500, new { message = "Ocorreu um erro ao editar a notícia.", erro = ex.Message });
+            }
         }
     }
 }
