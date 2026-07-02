@@ -572,10 +572,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("tipo")
                         .HasColumnType("int");
 
-                    b.Property<string>("token")
-                        .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
-
                     b.HasKey("id");
 
                     b.ToTable("Usuarios");

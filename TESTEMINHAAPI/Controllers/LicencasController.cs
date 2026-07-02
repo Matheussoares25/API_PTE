@@ -45,7 +45,7 @@ namespace TESTEMINHAAPI.Controllers
                     .Where(l => l.usuario_id == usuarioId)
                     .ToList();
 
-                if (list == null || list.Count == 0) return NotFound();
+                if (list == null || list.Count == 0) return NotFound(new { message = "Usuário não encontrado." });
 
                 return Ok(list);
             }
@@ -73,7 +73,7 @@ namespace TESTEMINHAAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "2,3")]
+        //[Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar([FromBody] Licencas dto)
         {
@@ -99,16 +99,6 @@ namespace TESTEMINHAAPI.Controllers
 
                 _context.Licencas.Add(novo);
                 _context.SaveChanges();
-
-                if (novo.usuario_id.HasValue)
-                {
-                    var usuario = _context.Usuarios.FirstOrDefault(u => u.id == novo.usuario_id.Value);
-                    if (usuario != null)
-                    {
-                        usuario.token = novo.token;
-                        _context.SaveChanges();
-                    }
-                }
 
                 return CreatedAtAction(nameof(Obter), new { id = novo.id }, novo);
             }
@@ -145,6 +135,7 @@ namespace TESTEMINHAAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "2,3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {

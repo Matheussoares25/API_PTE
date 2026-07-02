@@ -36,7 +36,7 @@ namespace TESTEMINHAAPI.Controllers
             return Ok(vaga);
         }
 
-       // [Authorize(Roles = "2,3")]
+        [Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Vagas dto)
         {

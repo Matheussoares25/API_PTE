@@ -14,5 +14,7 @@ namespace TESTEMINHAAPI.DTOS
    
         public string nome { get; set; }
 
+        public int acesso { get; set; }
+
     }
 }

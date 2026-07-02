@@ -112,6 +112,12 @@ namespace TESTEMINHAAPI.Controllers
                         return BadRequest(new { sucesso = false, message = "Usuário informado não existe" });
                 }
 
+                var existe = _context.Usuarios.Any(u => u.email == dto.email);
+                if (existe)
+                {
+                    return BadRequest(new { sucesso = false, message = "Email já cadastrado." });
+                }
+
                 var novo = new Candidaturas
                 {
                     vaga_id = dto.vaga_id,

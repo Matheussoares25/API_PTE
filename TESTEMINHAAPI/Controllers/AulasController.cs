@@ -21,6 +21,30 @@ namespace TESTEMINHAAPI.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Retorna todas as aulas de um módulo específico.
+        /// </summary>
+        [Authorize(Roles = "2,3")]
+        [HttpGet("modulo/{moduloId}")]
+        public IActionResult ObterPorModulo(int moduloId)
+        {
+            try
+            {
+                var aulas = _context.Aulas
+                    .Where(a => a.modulo_id == moduloId)
+                    .Include(a => a.modulo)
+                    .ThenInclude(m => m.treinamento)
+                    .ToList();
+
+                return Ok(aulas);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao listar aulas do módulo {ModuloId}", moduloId);
+                return StatusCode(500, new { mensagem = "Não foi possível listar as aulas do módulo" });
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public IActionResult Listar()

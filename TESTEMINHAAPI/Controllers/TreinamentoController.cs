@@ -19,7 +19,7 @@ namespace TESTEMINHAAPI.Controllers
             
             _context = context;
         }
-        [Authorize]
+        [Authorize(Roles = "2,3")]
         [HttpGet]
         public IActionResult BuscaTreinamentos()
         {
@@ -28,6 +28,44 @@ namespace TESTEMINHAAPI.Controllers
            return Ok(treinamentos);
             
 
+        }
+
+        /// <summary>
+        /// Retorna todos os cursos com seus módulos e as aulas de cada módulo.
+        /// </summary>
+        [Authorize(Roles = "2,3")]
+        [HttpGet("completo")]
+        public IActionResult CursosComModulosEAulas()
+        {
+            try
+            {
+                var cursos = _context.Treinamentos
+                    .Select(t => new
+                    {
+                        id = t.id,
+                        nome = t.nome,
+                        criado = t.criado,
+                        modulos = _context.Modulos
+                            .Where(m => m.treinamento_id == t.id)
+                            .Select(m => new
+                            {
+                                id = m.id,
+                                nome = m.nome,
+                                aulas = _context.Aulas
+                                    .Where(a => a.modulo_id == m.id)
+                                    .Select(a => new { a.id, a.nome, a.conteudo, a.criado })
+                                    .ToList()
+                            })
+                            .ToList()
+                    })
+                    .ToList();
+
+                return Ok(cursos);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { sucesso = false, message = "Ocorreu um erro ao listar os cursos com módulos e aulas.", erro = ex.Message });
+            }
         }
 
         [Authorize]

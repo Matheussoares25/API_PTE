@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace APIPTE.Migrations
 {
     /// <inheritdoc />
-    public partial class migrationcorreta : Migration
+    public partial class semtokenemusuarios : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,8 +61,6 @@ namespace APIPTE.Migrations
                     senha = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ativo = table.Column<int>(type: "int", nullable: false),
-                    token = table.Column<string>(type: "varchar(255)", maxLength: 255, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     tipo = table.Column<int>(type: "int", nullable: false),
                     nome = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
