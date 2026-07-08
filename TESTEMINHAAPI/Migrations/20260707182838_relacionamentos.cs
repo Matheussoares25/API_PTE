@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace APIPTE.Migrations
 {
     /// <inheritdoc />
-    public partial class semtokenemusuarios : Migration
+    public partial class relacionamentos : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,7 @@ namespace APIPTE.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     email = table.Column<string>(type: "varchar(120)", maxLength: 120, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    senha = table.Column<string>(type: "longtext", nullable: false)
+                    senha = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ativo = table.Column<int>(type: "int", nullable: false),
                     tipo = table.Column<int>(type: "int", nullable: false),
@@ -201,6 +201,36 @@ namespace APIPTE.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Matriculas",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    usuario_id = table.Column<int>(type: "int", nullable: false),
+                    treinamento_id = table.Column<int>(type: "int", nullable: false),
+                    matriculado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Matriculas", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_Matriculas_Treinamentos_treinamento_id",
+                        column: x => x.treinamento_id,
+                        principalTable: "Treinamentos",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Matriculas_Usuarios_usuario_id",
+                        column: x => x.usuario_id,
+                        principalTable: "Usuarios",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Reports",
                 columns: table => new
                 {
@@ -233,7 +263,8 @@ namespace APIPTE.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     usuario_id = table.Column<int>(type: "int", nullable: false),
                     treinamento_id = table.Column<int>(type: "int", nullable: false),
-                    matriculado_em = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    inicio_em = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    concluido_em = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     status = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -265,7 +296,7 @@ namespace APIPTE.Migrations
                     usuario_id = table.Column<int>(type: "int", nullable: true),
                     nome = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: false)
+                    email = table.Column<string>(type: "varchar(150)", maxLength: 150, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     telefone = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -303,6 +334,8 @@ namespace APIPTE.Migrations
                     conteudo = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     modulo_id = table.Column<int>(type: "int", nullable: false),
+                    midia_url = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
@@ -370,33 +403,6 @@ namespace APIPTE.Migrations
                         name: "FK_UseProva_Usuarios_usuario_id",
                         column: x => x.usuario_id,
                         principalTable: "Usuarios",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Midias",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    url = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    tipo = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    aula_id = table.Column<int>(type: "int", nullable: false),
-                    criado = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Midias", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_Midias_Aulas_aula_id",
-                        column: x => x.aula_id,
-                        principalTable: "Aulas",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -525,9 +531,14 @@ namespace APIPTE.Migrations
                 column: "usuario_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Midias_aula_id",
-                table: "Midias",
-                column: "aula_id");
+                name: "IX_Matriculas_treinamento_id",
+                table: "Matriculas",
+                column: "treinamento_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Matriculas_usuario_id",
+                table: "Matriculas",
+                column: "usuario_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Modulos_treinamento_id",
@@ -611,7 +622,7 @@ namespace APIPTE.Migrations
                 name: "Licencas");
 
             migrationBuilder.DropTable(
-                name: "Midias");
+                name: "Matriculas");
 
             migrationBuilder.DropTable(
                 name: "Notas");

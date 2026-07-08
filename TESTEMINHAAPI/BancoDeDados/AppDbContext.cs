@@ -25,7 +25,6 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<Aulas> Aulas { get; set; }
         public DbSet<Questoes> Questoes { get; set; }
         public DbSet<Prova> Provas { get; set; }
-        public DbSet<Midias> Midias { get; set; }
         public DbSet<Alternativas> Alternativas { get; set; }
         public DbSet<Vagas> Vagas { get; set; }
         public DbSet<Candidaturas> Candidaturas { get; set; }
@@ -35,6 +34,7 @@ namespace TESTEMINHAAPI.BancoDeDados
         public DbSet<Reports> Reports { get; set; }
         public DbSet<UseProva> UseProva { get; set; }
         public DbSet<UseTreinamentos> UseTreinamentos { get; set; }
+        public DbSet<Matricula> Matriculas { get; set; }
 
         public DbSet<Licencas> Licencas { get; set; }
 

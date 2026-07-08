@@ -87,7 +87,7 @@ namespace TESTEMINHAAPI.Controllers
             }
         }
 
-        [Authorize(Roles = "2,3")]
+        //[Authorize(Roles = "2,3")]
         [HttpPost]
         public IActionResult Criar(Aulas dto)
         {
@@ -104,6 +104,7 @@ namespace TESTEMINHAAPI.Controllers
                     nome = dto.nome,
                     conteudo = dto.conteudo,
                     modulo_id = dto.modulo_id,
+                    midia_url = dto.midia_url,
                     criado = DateTime.UtcNow
                 };
 
@@ -115,7 +116,7 @@ namespace TESTEMINHAAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro ao criar aula");
-                return StatusCode(500, new { mensagem = "Não foi possível criar a aula" });
+                return StatusCode(500, new { message = "Não foi possível criar a aula" });
             }
         }
 
@@ -134,9 +135,12 @@ namespace TESTEMINHAAPI.Controllers
                 if (!moduloExiste)
                     return BadRequest(new { sucesso = false, message = "Módulo inexistente" });
 
+                // midia_url é apenas uma string; não há validação contra tabela externa
+
                 aula.nome = dto.nome;
                 aula.conteudo = dto.conteudo;
                 aula.modulo_id = dto.modulo_id;
+                aula.midia_url = dto.midia_url;
 
                 _context.SaveChanges();
 

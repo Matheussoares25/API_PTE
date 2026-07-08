@@ -55,7 +55,12 @@ namespace TESTEMINHAAPI.Controllers
 
             if (modulo == null) return NotFound();
 
-            return Ok(modulo);
+            // Busca todas as aulas relacionadas a este módulo
+            var aula = _context.Aulas
+                .Where(a => a.modulo_id == id)
+                .ToList();
+
+            return Ok(new { modulo, aula });
         }
 
         /// <summary>

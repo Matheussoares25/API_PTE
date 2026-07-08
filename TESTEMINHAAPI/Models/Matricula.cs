@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TESTEMINHAAPI.Models
 {
-    public class UseTreinamentos
+    public class Matricula
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,11 +18,7 @@ namespace TESTEMINHAAPI.Models
         [ForeignKey("treinamento_id")]
         public Treinamentos? treinamento { get; set; }
 
-        // Data de início da utilização/matrícula
-        public DateTime inicio_em { get; set; }
-
-        // Data de conclusão do curso; pode ser nula enquanto não concluído
-        public DateTime? concluido_em { get; set; }
+        public DateTime matriculado_em { get; set; }
 
         [MaxLength(50)]
         public string status { get; set; } = "matriculado";

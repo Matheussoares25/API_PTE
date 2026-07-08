@@ -16,6 +16,6 @@ namespace TESTEMINHAAPI.Models
         // Relacionamento com Treinamentos (curso)
         public int treinamento_id { get; set; }
         [ForeignKey("treinamento_id")]
-        public Treinamentos treinamento { get; set; }
+        public Treinamentos? treinamento { get; set; }
     }
 }
