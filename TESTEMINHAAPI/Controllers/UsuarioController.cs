@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
+using System.Security.Claims;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.DTOS;
 using TESTEMINHAAPI.Models;
@@ -21,6 +22,7 @@ namespace MinhaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "2,3")]
         public ActionResult Listar()
         {
             try
@@ -44,11 +46,19 @@ namespace MinhaApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult BuscarPorId(int id)
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult BuscarPorId()
         {
             try
             {
+                var idClaim = User.FindFirst("Id")?.Value;
+
+                if (idClaim == null || !int.TryParse(idClaim, out int id))
+                {
+                    return Unauthorized(new { message = "Token inválido ou sem id." });
+                }
+
                 var usuario = _context.Usuarios.FirstOrDefault(u => u.id == id);
 
                 if (usuario == null)
@@ -61,7 +71,7 @@ namespace MinhaApi.Controllers
                     usuario.id,
                     usuario.email,
                     usuario.tipo,
-
+                    usuario.nome
                 });
             }
             catch (Exception ex)
@@ -71,7 +81,6 @@ namespace MinhaApi.Controllers
         }
 
         [Authorize(Roles = "3")]
-        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Deletar(int id)
         {
