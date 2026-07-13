@@ -112,10 +112,23 @@ namespace TESTEMINHAAPI.Controllers
                         return BadRequest(new { sucesso = false, message = "Usuário informado não existe" });
                 }
 
-                var existe = _context.Usuarios.Any(u => u.email == dto.email);
-                if (existe)
+                // Verifica se já existe uma candidatura para a mesma vaga
+                // Se for usuário autenticado (usuario_id informado), checamos por usuario_id + vaga_id
+                // Caso contrário, checamos por email + vaga_id
+                bool candidaturaExiste;
+                if (dto.usuario_id.HasValue)
                 {
-                    return BadRequest(new { sucesso = false, message = "Email já cadastrado." });
+                    candidaturaExiste = _context.Candidaturas.Any(c => c.vaga_id == dto.vaga_id && c.usuario_id == dto.usuario_id.Value);
+                }
+                else
+                {
+                    candidaturaExiste = !string.IsNullOrWhiteSpace(dto.email) &&
+                        _context.Candidaturas.Any(c => c.vaga_id == dto.vaga_id && c.email == dto.email);
+                }
+
+                if (candidaturaExiste)
+                {
+                    return BadRequest(new { sucesso = false, message = "Já existe uma candidatura para esta vaga." });
                 }
 
                 var novo = new Candidaturas
