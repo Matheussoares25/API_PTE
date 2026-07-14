@@ -8,13 +8,13 @@ namespace TESTEMINHAAPI.DTOS
         public int id { get; set; }
 
         [MaxLength(120)]
-        public string email { get; set; }
+        public string? email { get; set; }
 
-        public int ativo { get; set; }
+        public int? ativo { get; set; }
    
-        public string nome { get; set; }
+        public string? nome { get; set; }
 
-        public int acesso { get; set; }
+        public int? acesso { get; set; }
 
     }
 }

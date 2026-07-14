@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TESTEMINHAAPI.BancoDeDados;
 
@@ -11,9 +12,11 @@ using TESTEMINHAAPI.BancoDeDados;
 namespace APIPTE.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260707182838_relacionamentos")]
+    partial class relacionamentos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,12 +71,14 @@ namespace APIPTE.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("conteudo")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("criado")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("midia_url")
+                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
@@ -81,6 +86,7 @@ namespace APIPTE.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("nome")
+                        .IsRequired()
                         .HasMaxLength(125)
                         .HasColumnType("varchar(125)");
 
@@ -555,9 +561,6 @@ namespace APIPTE.Migrations
                     b.Property<int>("ativo")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("data_criacao")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -568,9 +571,6 @@ namespace APIPTE.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("senha")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("telefone")
                         .HasColumnType("longtext");
 
                     b.Property<int>("tipo")

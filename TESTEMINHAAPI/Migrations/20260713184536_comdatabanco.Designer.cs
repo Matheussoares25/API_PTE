@@ -12,8 +12,8 @@ using TESTEMINHAAPI.BancoDeDados;
 namespace APIPTE.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260629120641_semtokenemusuarios")]
-    partial class semtokenemusuarios
+    [Migration("20260713184536_comdatabanco")]
+    partial class comdatabanco
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -71,17 +71,19 @@ namespace APIPTE.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
                     b.Property<string>("conteudo")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("criado")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("midia_url")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
                     b.Property<int>("modulo_id")
                         .HasColumnType("int");
 
                     b.Property<string>("nome")
-                        .IsRequired()
                         .HasMaxLength(125)
                         .HasColumnType("varchar(125)");
 
@@ -109,7 +111,6 @@ namespace APIPTE.Migrations
                         .HasColumnType("varchar(500)");
 
                     b.Property<string>("email")
-                        .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("varchar(150)");
 
@@ -214,7 +215,7 @@ namespace APIPTE.Migrations
                     b.ToTable("Licencas", (string)null);
                 });
 
-            modelBuilder.Entity("TESTEMINHAAPI.Models.Midias", b =>
+            modelBuilder.Entity("TESTEMINHAAPI.Models.Matricula", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -222,32 +223,27 @@ namespace APIPTE.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("aula_id")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("criado")
+                    b.Property<DateTime>("matriculado_em")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<string>("tipo")
+                    b.Property<string>("status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
 
-                    b.Property<string>("url")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                    b.Property<int>("treinamento_id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("usuario_id")
+                        .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("aula_id");
+                    b.HasIndex("treinamento_id");
 
-                    b.ToTable("Midias");
+                    b.HasIndex("usuario_id");
+
+                    b.ToTable("Matriculas");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Modulos", b =>
@@ -522,7 +518,10 @@ namespace APIPTE.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<DateTime>("matriculado_em")
+                    b.Property<DateTime?>("concluido_em")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("inicio_em")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("status")
@@ -559,6 +558,9 @@ namespace APIPTE.Migrations
                     b.Property<int>("ativo")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("data_criacao")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("email")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -569,7 +571,9 @@ namespace APIPTE.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("senha")
-                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("telefone")
                         .HasColumnType("longtext");
 
                     b.Property<int>("tipo")
@@ -685,15 +689,23 @@ namespace APIPTE.Migrations
                     b.Navigation("usuario");
                 });
 
-            modelBuilder.Entity("TESTEMINHAAPI.Models.Midias", b =>
+            modelBuilder.Entity("TESTEMINHAAPI.Models.Matricula", b =>
                 {
-                    b.HasOne("TESTEMINHAAPI.Models.Aulas", "aula")
+                    b.HasOne("TESTEMINHAAPI.Models.Treinamentos", "treinamento")
                         .WithMany()
-                        .HasForeignKey("aula_id")
+                        .HasForeignKey("treinamento_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("aula");
+                    b.HasOne("TESTEMINHAAPI.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("usuario_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
+
+                    b.Navigation("treinamento");
                 });
 
             modelBuilder.Entity("TESTEMINHAAPI.Models.Modulos", b =>

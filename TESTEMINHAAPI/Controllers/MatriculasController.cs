@@ -1,33 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.Models;
 using TESTEMINHAAPI.DTOS;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System;
 
 namespace TESTEMINHAAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // Controller para gerenciar registros de matrícula/uso de treinamentos.
-    // UseTreinamentos armazena metadados da matrícula (matriculado_em, status).
-    // Ideal para operações que precisam de data de matrícula ou status do usuário no treinamento.
-    public class UseTreinamentosController : ControllerBase
+    public class MatriculasController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public UseTreinamentosController(AppDbContext context)
+        public MatriculasController(AppDbContext context)
         {
             _context = context;
         }
 
-        //[Authorize]
         [HttpGet]
         public IActionResult Listar()
         {
-            var list = _context.UseTreinamentos
+            var list = _context.Matriculas
                 .Include(u => u.treinamento)
                 .Include(u => u.Usuario)
                 .ToList();
@@ -43,65 +38,53 @@ namespace TESTEMINHAAPI.Controllers
                     nome = ut.Usuario.nome
                 },
                 treinamento = ut.treinamento,
-                inicio_em = ut.inicio_em,
-                concluido_em = ut.concluido_em,
+                matriculado_em = ut.matriculado_em,
                 status = ut.status
             }).ToList();
 
             return Ok(resultado);
         }
 
-        // Retorna todos os usuários associados a um Treinamento específico
-        // [Authorize]
         [HttpGet("treinamento/{treinamentoId}/")]
         public IActionResult UsuariosPorTreinamento(int treinamentoId)
         {
-            var usuarios = _context.UseTreinamentos
-        .Include(ut => ut.Usuario)
-        .Where(ut => ut.treinamento_id == treinamentoId)
-        .Select(ut => new
-        {
-            usuario = new
-            {
-                ut.Usuario.id,
-                ut.Usuario.nome,
-                ut.Usuario.email,
-                ut.Usuario.ativo
-            },
+            var usuarios = _context.Matriculas
+                .Include(ut => ut.Usuario)
+                .Where(ut => ut.treinamento_id == treinamentoId)
+                .Select(ut => new
+                {
+                    usuario = new
+                    {
+                        ut.Usuario.id,
+                        ut.Usuario.nome,
+                        ut.Usuario.email,
+                        ut.Usuario.ativo
+                    },
 
-            ut.id,
-            ut.treinamento_id,
-            ut.inicio_em,
-            ut.concluido_em,
-            ut.status
-        })
-        .ToList();
+                    ut.id,
+                    ut.treinamento_id,
+                    ut.matriculado_em,
+                    ut.status
+                })
+                .ToList();
 
             return Ok(usuarios);
         }
 
-        // Retorna todos os treinamentos associados a um Usuário (URL: usuario/{id})
-        //  [Authorize]
         [HttpGet("usuario/{usuarioId}")]
         public IActionResult TreinamentosPorUsuario(int usuarioId)
         {
-            var treinamentos = _context.UseTreinamentos
+            var treinamentos = _context.Matriculas
                 .Include(ut => ut.treinamento)
                 .Where(ut => ut.usuario_id == usuarioId)
-                .Select(ut => new {
-                    ut.treinamento,
-                    ut.inicio_em,
-                    ut.concluido_em,
-                    ut.status
-                })
+                .Select(ut => ut.treinamento)
                 .ToList();
 
             return Ok(treinamentos);
         }
 
-        //[Authorize(Roles = "2,3")]
         [HttpPost]
-        public IActionResult Criar(UseTreinamentos dto)
+        public IActionResult Criar(Matricula dto)
         {
             if (dto == null) return BadRequest();
 
@@ -109,45 +92,41 @@ namespace TESTEMINHAAPI.Controllers
             var treinoExists = _context.Treinamentos.Any(t => t.id == dto.treinamento_id);
             if (!userExists || !treinoExists) return BadRequest(new { sucesso = false, message = "Usuário ou Treinamento inexistente" });
 
-            var novo = new UseTreinamentos
+            var novo = new Matricula
             {
                 usuario_id = dto.usuario_id,
                 treinamento_id = dto.treinamento_id,
-                inicio_em = DateTime.UtcNow,
-                concluido_em = dto.concluido_em,
+                matriculado_em = DateTime.UtcNow,
                 status = dto.status
             };
 
-            _context.UseTreinamentos.Add(novo);
+            _context.Matriculas.Add(novo);
             _context.SaveChanges();
 
             return Ok();
         }
 
-        // [Authorize(Roles = "2,3")]
         [HttpPut("{id}")]
-        public IActionResult Editar(int id, UseTreinamentos dto)
+        public IActionResult Editar(int id, Matricula dto)
         {
-            var item = _context.UseTreinamentos.FirstOrDefault(u => u.id == id);
+            var item = _context.Matriculas.FirstOrDefault(u => u.id == id);
             if (item == null) return NotFound();
             if (dto == null) return BadRequest();
 
             item.status = dto.status;
-            item.inicio_em = dto.inicio_em;
-            item.concluido_em = dto.concluido_em;
+            item.matriculado_em = dto.matriculado_em;
 
             _context.SaveChanges();
             return Ok(new { sucesso = true, message = "Registro de matrícula atualizado", data = item });
         }
 
-        //[Authorize(Roles = "3")]
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var item = _context.UseTreinamentos.FirstOrDefault(u => u.id == id);
+            var item = _context.Matriculas.FirstOrDefault(u => u.id == id);
             if (item == null) return NotFound();
 
-            _context.UseTreinamentos.Remove(item);
+            _context.Matriculas.Remove(item);
             _context.SaveChanges();
 
             return NoContent();

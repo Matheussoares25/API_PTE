@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Immutable;
+using System.Security.Claims;
 using TESTEMINHAAPI.BancoDeDados;
 using TESTEMINHAAPI.DTOS;
 using TESTEMINHAAPI.Models;
@@ -21,6 +23,7 @@ namespace MinhaApi.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "2,3")]
         public ActionResult Listar()
         {
             try
@@ -44,11 +47,19 @@ namespace MinhaApi.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public IActionResult BuscarPorId(int id)
+        [HttpGet("me")]
+        [Authorize]
+        public IActionResult BuscarPorId()
         {
             try
             {
+                var idClaim = User.FindFirst("Id")?.Value;
+
+                if (idClaim == null || !int.TryParse(idClaim, out int id))
+                {
+                    return Unauthorized(new { message = "Token inválido ou sem id." });
+                }
+
                 var usuario = _context.Usuarios.FirstOrDefault(u => u.id == id);
 
                 if (usuario == null)
@@ -61,7 +72,10 @@ namespace MinhaApi.Controllers
                     usuario.id,
                     usuario.email,
                     usuario.tipo,
-
+                    usuario.nome,
+                    usuario.ativo,
+                    usuario.data_criacao,
+                    usuario.telefone
                 });
             }
             catch (Exception ex)
@@ -71,7 +85,6 @@ namespace MinhaApi.Controllers
         }
 
         [Authorize(Roles = "3")]
-        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult Deletar(int id)
         {
@@ -93,7 +106,7 @@ namespace MinhaApi.Controllers
         }
 
         [HttpPut("{id}")]
-        //[Authorize(Roles = "2,3")]
+        [Authorize(Roles = "2,3")]
         public IActionResult Atualizar(int id, [FromBody] Usuario usuarioAtualizado)
         {
             try
@@ -108,7 +121,56 @@ namespace MinhaApi.Controllers
                 usuarioExistente.nome = usuarioAtualizado.nome;
                 usuarioExistente.email = usuarioAtualizado.email;
                 usuarioExistente.ativo = usuarioAtualizado.ativo;
-                usuarioExistente.tipo = usuarioAtualizado.tipo;
+                usuarioExistente.telefone = usuarioAtualizado.telefone;
+
+                _context.SaveChanges();
+
+                return Ok(new UsuarioDTO
+                {
+                    id = usuarioExistente.id,
+                    email = usuarioExistente.email,
+                    nome = usuarioExistente.nome,
+                    ativo = usuarioExistente.ativo,
+                    acesso = usuarioExistente.acesso
+
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    message = "Ocorreu um erro ao atualizar o usuário.",
+                    erro = ex.Message
+                });
+            }
+        }
+        [HttpPut("me")]
+        [Authorize]
+        public IActionResult Atualizar([FromBody] Usuario usuarioAtualizado)
+        {
+            try
+            {
+                var idClaim = User.FindFirst("Id")?.Value;
+
+                if (idClaim == null || !int.TryParse(idClaim, out int id))
+                {
+                    return Unauthorized(new { message = "Token inválido ou sem id." });
+                }
+
+                var usuarioExistente = _context.Usuarios.FirstOrDefault(u => u.id == id);
+
+                if (usuarioExistente == null)
+                {
+                    return NotFound(new { message = "Usuário não encontrado." });
+                }
+
+                
+
+                usuarioExistente.nome = usuarioAtualizado.nome;
+                usuarioExistente.email = usuarioAtualizado.email;
+                usuarioExistente.telefone = usuarioAtualizado.telefone;
+
+
 
                 _context.SaveChanges();
 
@@ -154,10 +216,14 @@ namespace MinhaApi.Controllers
                 {
                     nome = dto.nome,
                     email = dto.email,
+                    telefone = dto.telefone,
                     ativo = dto.ativo != 0 ? dto.ativo : 1,
                     tipo = dto.tipo,
                     acesso = dto.acesso
                 };
+
+                // Define a data de criação ao inserir o usuário (data local)
+                novo.data_criacao = DateTime.Now;
 
                 // Hash da senha antes de persistir - evita FormatException ao verificar posteriormente
                 var hasher = new PasswordHasher<Usuario>();

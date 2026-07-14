@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TESTEMINHAAPI.Models
@@ -25,5 +26,10 @@ namespace TESTEMINHAAPI.Models
         public string nome { get; set; }
 
         public int acesso { get; set; }
+        public string? telefone { get; set; }
+
+        public DateTime data_criacao { get; set; }
+
     }
 }
+
