@@ -103,7 +103,7 @@ namespace TESTEMINHAAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { successo = false, message = "Ocorreu um erro durante o login.", erro = ex.Message });
-                erro = ex.ToString()
+              
             }
 
         }
