@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TESTEMINHAAPI.Models;
-using TESTEMINHAAPI.BancoDeDados;
-using TESTEMINHAAPI.Services;
+﻿using APIPTE.DTOS;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
-using APIPTE.DTOS;
+using TESTEMINHAAPI.BancoDeDados;
+using TESTEMINHAAPI.Models;
+using TESTEMINHAAPI.Services;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TESTEMINHAAPI.Controllers
 
@@ -103,6 +103,7 @@ namespace TESTEMINHAAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { successo = false, message = "Ocorreu um erro durante o login.", erro = ex.Message });
+                erro = ex.ToString()
             }
 
         }
