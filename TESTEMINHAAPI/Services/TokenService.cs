@@ -12,7 +12,7 @@ namespace TESTEMINHAAPI.Services
         {
             var tokengerado = new JwtSecurityTokenHandler();
 
-            var chave = Encoding.UTF8.GetBytes("MinhaChaveJWTMuitoSeguraComMaisDe32Caracteres");
+            var chave = Encoding.UTF8.GetBytes("4e38106606456633a8392d3104d742178648b92a9fb3a771ba6344ec8f0643bc");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
